@@ -117,22 +117,22 @@ set (BAG_LEGACY_SOURCE_FILES
 source_group("Legacy Source Files" FILES ${BAG_LEGACY_SOURCE_FILES})
 
 set (BAG_SOURCE_FILES 
- bagdataset.h
- bagdataset.cpp
- baginterleavedlayer.h
- baginterleavedlayer.cpp
- baglayer.h
- baglayer.cpp
- bagmetadata.h
- bagmetadata.cpp
- bagmetadata2.h
- bagmetadata2.cpp
- bagtrackinglist.h
- bagtrackinglist.cpp
+ bag_dataset.h
+ bag_dataset.cpp
+ bag_interleavedlayer.h
+ bag_interleavedlayer.cpp
+ bag_layer.h
+ bag_layer.cpp
+ bag_metadata.h
+ bag_metadata.cpp
+ bag_metadatav2.h
+ bag_metadatav2.cpp
+ bag_trackinglist.h
+ bag_trackinglist.cpp
  bag_errors.h
- bagfordec.h
- bagstdint.h
- bagtypes.h)
+ bag_fordec.h
+ bag_stdint.h
+ bag_types.h)
 source_group("Source Files" FILES ${BAG_SOURCE_FILES})
  
 add_library (bag ${LIB_TYPE} ${BAG_LEGACY_SOURCE_FILES} ${BAG_SOURCE_FILES} )
