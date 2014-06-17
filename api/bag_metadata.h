@@ -1,5 +1,5 @@
-#ifndef BAGMETADATA_H
-#define BAGMETADATA_H
+#ifndef BAG_METADATA_H
+#define BAG_METADATA_H
 
 #include "bag_config.h"
 #include "bag_metadata.h"
@@ -25,4 +25,4 @@ protected:
 
 }   //namespace BAG
 
-#endif  //BAGMETADATA_H
+#endif  //BAG_METADATA_H

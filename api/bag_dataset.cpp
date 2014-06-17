@@ -1,7 +1,7 @@
-#include "bagdataset.h"
-#include "bagtrackinglist.h"
-#include "baglayer.h"
-#include "baginterleavedlayer.h"
+#include "bag_dataset.h"
+#include "bag_trackinglist.h"
+#include "bag_layer.h"
+#include "bag_interleavedlayer.h"
 #include "bag_private.h"
 
 #include <h5cpp.h>

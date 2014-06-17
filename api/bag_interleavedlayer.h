@@ -1,8 +1,8 @@
-#ifndef BAGINTERLEAVEDLAYER
-#define BAGINTERLEAVEDLAYER
+#ifndef BAG_INTERLEAVEDLAYER
+#define BAG_INTERLEAVEDLAYER
 
-#include "baglayer.h"
-#include "bagtypes.h"
+#include "bag_layer.h"
+#include "bag_types.h"
 
 namespace BAG
 {
@@ -28,4 +28,4 @@ private:
 
 }   //namespace BAG
 
-#endif  //BAGINTERLEAVEDLAYER
+#endif  //BAG_INTERLEAVEDLAYER

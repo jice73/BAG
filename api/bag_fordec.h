@@ -1,5 +1,5 @@
-#ifndef BAGFORDEC_H
-#define BAGFORDEC_H
+#ifndef BAG_FORDEC_H
+#define BAG_FORDEC_H
 
 namespace BAG
 {
@@ -12,4 +12,4 @@ class TrackingList;
 
 }   //namespace BAG
 
-#endif  //BAGFORDEC_H
+#endif  //BAG_FORDEC_H

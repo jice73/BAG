@@ -1,9 +1,9 @@
-#ifndef BAGTRACKINGLIST_H
-#define BAGTRACKINGLIST_H
+#ifndef BAG_TRACKINGLIST_H
+#define BAG_TRACKINGLIST_H
 
 #include "bag.h"
 #include "bag_config.h"
-#include "bagdataset.h"
+#include "bag_dataset.h"
 
 #include <vector>
 
@@ -31,4 +31,4 @@ protected:
 
 }   //BAG
 
-#endif  //BAGTRACKINGLIST_H
+#endif  //BAG_TRACKINGLIST_H

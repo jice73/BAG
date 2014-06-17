@@ -1,11 +1,9 @@
-#ifndef BAGLAYER_H
-#define BAGLAYER_H
+#ifndef BAG_LAYER_H
+#define BAG_LAYER_H
 
 #include "bag_config.h"
-#include "bagtypes.h"
-#include "bagdataset.h"
-
-#include <string>
+#include "bag_types.h"
+#include "bag_dataset.h"
 
 namespace BAG
 {
@@ -42,4 +40,4 @@ private:
 
 }   //namespace BAG
 
-#endif  //BAGLAYER_H
+#endif  //BAG_LAYER_H

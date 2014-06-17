@@ -89,38 +89,53 @@ IF(MSVC)
 ENDIF(MSVC)
 
 #List all of the bag api source files.
+set (BAG_LEGACY_SOURCE_FILES 
+ legacy/bag_attr.c
+ legacy/bag_crypto.c
+ legacy/bag_hdf.c
+ legacy/bag_metadata.cpp
+ legacy/bag_metadata_export.cpp
+ legacy/bag_metadata_import.cpp
+ legacy/bag_legacy.cpp
+ legacy/bag_opt_group.c
+ legacy/bag_opt_surfaces.c
+ legacy/bag_reference_system.cpp
+ legacy/bag_surface_correct.c
+ legacy/bag_surfaces.c
+ legacy/bag_tracking_list.c
+ legacy/crc32.c
+ legacy/onscrypto.c
+ legacy/bag.h
+ legacy/bag_metadata.h
+ legacy/bag_legacy.h
+ legacy/bag_opt_surfaces.h
+ legacy/bag_private.h
+ legacy/crc32.h
+ legacy/dt_cc.h
+ legacy/onscrypto.h
+ legacy/stdtypes.h)
+source_group("Legacy Source Files" FILES ${BAG_LEGACY_SOURCE_FILES})
+
 set (BAG_SOURCE_FILES 
- bag_attr.c
- bag_crypto.c
- bag_hdf.c
- bag_metadata.cpp
- bag_metadata_export.cpp
- bag_metadata_import.cpp
- bag_legacy.cpp
- bag_opt_group.c
- bag_opt_surfaces.c
- bag_reference_system.cpp
- bag_surface_correct.c
- bag_surfaces.c
- bag_tracking_list.c
- crc32.c
- onscrypto.c)
+ bagdataset.h
+ bagdataset.cpp
+ baginterleavedlayer.h
+ baginterleavedlayer.cpp
+ baglayer.h
+ baglayer.cpp
+ bagmetadata.h
+ bagmetadata.cpp
+ bagmetadata2.h
+ bagmetadata2.cpp
+ bagtrackinglist.h
+ bagtrackinglist.cpp
+ bag_errors.h
+ bagfordec.h
+ bagstdint.h
+ bagtypes.h)
 source_group("Source Files" FILES ${BAG_SOURCE_FILES})
  
-set (BAG_HEADER_FILES 
- bag.h
- bag_errors.h
- bag_metadata.h
- bag_legacy.h
- bag_opt_surfaces.h
- bag_private.h
- crc32.h
- dt_cc.h
- onscrypto.h
- stdtypes.h)
-source_group("Header Files" FILES ${BAG_HEADER_FILES})
- 
-add_library (bag ${LIB_TYPE} ${BAG_SOURCE_FILES} ${BAG_HEADER_FILES} )
+add_library (bag ${LIB_TYPE} ${BAG_LEGACY_SOURCE_FILES} ${BAG_SOURCE_FILES} )
 
 target_link_libraries(bag ${HDF5_LIB})
 target_link_libraries(bag ${BEECRYPT_LIB})

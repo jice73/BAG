@@ -1,4 +1,4 @@
-#include "bagmetadata.h"
+#include "bag_metadata.h"
 
 namespace BAG
 {

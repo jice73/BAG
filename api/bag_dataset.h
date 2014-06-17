@@ -1,14 +1,12 @@
-#ifndef BAGDATASET_H
-#define BAGDATASET_H
+#ifndef BAG_DATASET_H
+#define BAG_DATASET_H
 
 #include "bag_config.h"
-#include "bagtypes.h"
-#include "bagstdint.h"
-#include "bagfordec.h"
+#include "bag_types.h"
+#include "bag_stdint.h"
+#include "bag_fordec.h"
 
-#include <string>
 #include <vector>
-#include <map>
 
 namespace BAG
 {
@@ -54,4 +52,4 @@ private:
 
 }   //namespace BAG
 
-#endif  //BAGDATASET_H
+#endif  //BAG_DATASET_H

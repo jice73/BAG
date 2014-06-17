@@ -1,4 +1,4 @@
-#include "bagmetadata2.h"
+#include "bag_metadatav2.h"
 #include "bag_private.h"
 
 #include <h5cpp.h>
@@ -23,7 +23,7 @@ struct MetadataData : public Data
 
 }   //namespace
 
-Metadata2::Metadata2(Dataset &dataset)
+MetadataV2::MetadataV2(Dataset &dataset)
 : m_pData(NULL)
 {
     H5::H5File *pFile = reinterpret_cast<H5::H5File *>(dataset.getFile());
@@ -58,7 +58,7 @@ Metadata2::Metadata2(Dataset &dataset)
 */
 }
 
-Metadata2::Metadata2(const Metadata2 &other)
+MetadataV2::MetadataV2(const MetadataV2 &other)
 : m_pData(NULL)
 {
     MetadataData *pOtherData = dynamic_cast<MetadataData *>(other.m_pData);
@@ -70,17 +70,17 @@ Metadata2::Metadata2(const Metadata2 &other)
     m_pData = pData;
 }
 
-Metadata2::~Metadata2()
+MetadataV2::~MetadataV2()
 {
 }
 
-std::auto_ptr<Metadata> Metadata2::newCopy() const
+std::auto_ptr<Metadata> MetadataV2::newCopy() const
 {
-    std::auto_ptr<Metadata> pRet(new Metadata2(*this));
+    std::auto_ptr<Metadata> pRet(new MetadataV2(*this));
     return pRet;
 }
 
-const BAG_METADATA& Metadata2::getStruct() const
+const BAG_METADATA& MetadataV2::getStruct() const
 {
     MetadataData *pData = dynamic_cast<MetadataData *>(this->m_pData);
     return pData->m_metaStruct;

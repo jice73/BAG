@@ -1,5 +1,5 @@
-#ifndef BAGTYPES_H
-#define BAGTYPES_H
+#ifndef BAG_TYPES_H
+#define BAG_TYPES_H
 
 namespace BAG
 {
@@ -38,4 +38,4 @@ namespace BAG
 
 }   //namespace BAG
 
-#endif  //BAGTYPES_H
+#endif  //BAG_TYPES_H

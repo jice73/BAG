@@ -1,5 +1,5 @@
-#ifndef BAGSTDINT_H
-#define BAGSTDINT_H
+#ifndef BAG_STDINT_H
+#define BAG_STDINT_H
 
 #ifdef _MSC_VER
     typedef signed __int8     int8_t;
@@ -14,4 +14,4 @@
     #include <stdint.h>
 #endif
 
-#endif // BAGSTDINT_H
+#endif // BAG_STDINT_H
