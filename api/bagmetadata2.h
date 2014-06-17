@@ -1,21 +1,21 @@
-#ifndef BAGMETADATA2_H
-#define BAGMETADATA2_H
+#ifndef BAG_METADATAV2_H
+#define BAG_METADATAV2_H
 
 #include "bag_config.h"
-#include "bagmetadata.h"
-#include "bagdataset.h"
+#include "bag_metadatatypes.h"
+#include "bag_dataset.h"
 
 namespace BAG
 {
 
 //! Version 2 of the BAG metadata.
-class BAG_API Metadata2 : public Metadata
+class BAG_API MetadataV2 : public Metadata
 {
 public:
-    explicit Metadata2(const std::string &xmlBuffer);
-    explicit Metadata2(Dataset &dataset);
-    explicit Metadata2(const Metadata2 &other);
-    virtual ~Metadata2();
+    explicit MetadataV2(const std::string &xmlBuffer);
+    explicit MetadataV2(Dataset &dataset);
+    explicit MetadataV2(const MetadataV2 &other);
+    virtual ~MetadataV2();
 
     virtual std::auto_ptr<Metadata> newCopy() const;
 
@@ -28,4 +28,4 @@ private:
 
 }   //namespace BAG
 
-#endif  //BAGMETADATA2_H
+#endif  //BAG_METADATAV2_H
