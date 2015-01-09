@@ -1,34 +1,16 @@
 #ifndef BAG_TYPES_H
 #define BAG_TYPES_H
 
+#include "bag_c_types.h"
+
 namespace BAG
 {
-    enum LayerType
-    {
-        Elevation = 0,
-        Uncertainty = 1,
-        Hypothesis_Strength = 2,
-		Num_Hypotheses	= 3,
-		Shoal_Elevation 	= 4,
-		Std_Dev		= 5,
-		Num_Soundings   	= 6,
-		Average_Elevation = 7,
-		Nominal_Elevation = 8
-    };
+    typedef BAG_LAYER_TYPE LayerType;
+    typedef BAG_DATA_TYPE DataType;
+    typedef BAG_OPEN_MODE OpenMode;
+    typedef BAG_GROUP_TYPE GroupType;
 
-    enum DataType
-    {
-        FLOAT32 = 0,
-        UINT32,
-        UNKNOWN
-    };
-
-    //! The type of interleaved group.
-    enum GroupType
-    {
-        NODE = 0,
-        ELEVATION
-    };
+    typedef bagTrackingItem TrackingItem;
 
     struct Data
     {

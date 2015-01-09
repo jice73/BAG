@@ -159,6 +159,10 @@ uint32_t Layer::getReadBufferSize(uint32_t rowStart, uint32_t columnStart, uint3
     return numRows * numCols * elementSize;
 }
 
+void Layer::getExtents(double &min, double &max) const
+{
+}
+
 uint8_t* Layer::read(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint32_t columnEnd, uint8_t *buffer) const
 {
     LayerData *pData = dynamic_cast<LayerData *>(m_pData);

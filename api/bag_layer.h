@@ -19,6 +19,8 @@ public:
     DataType getDataType() const;
     LayerType getLayerType() const;
 
+    void getExtents(double &min, double &max) const;
+
     virtual uint8_t getElementSize() const;
     virtual uint32_t getReadBufferSize(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint32_t columnEnd) const;
 

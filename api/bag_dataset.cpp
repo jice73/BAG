@@ -2,7 +2,6 @@
 #include "bag_trackinglist.h"
 #include "bag_layer.h"
 #include "bag_interleavedlayer.h"
-#include "bag_private.h"
 
 #include <h5cpp.h>
 
@@ -37,10 +36,12 @@ struct DatasetData : public Data
 }   //namespace
     
 
-Dataset::Dataset(const std::string &fileName)
+Dataset::Dataset(const std::string &fileName, BAG_OPEN_MODE openMode)
 {
     DatasetData *pData = new DatasetData();
-    pData->m_pFile.reset(new H5::H5File(fileName.c_str(), H5F_ACC_RDONLY));
+    pData->m_pFile.reset(new H5::H5File(fileName.c_str(),
+        (openMode == BAG_OPEN_READONLY) ? H5F_ACC_RDONLY : H5F_ACC_RDWR));
+
     this->m_pData = pData;
 
     std::auto_ptr<H5::Group> pBagGroup(new H5::Group(pData->m_pFile->openGroup(ROOT_PATH)));

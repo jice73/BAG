@@ -14,8 +14,8 @@ namespace BAG
 class BAG_API Dataset
 {
 public:
-    explicit Dataset(const std::string &fileName);
-    Dataset(const Metadata &metadata, const std::string &fileName);
+    Dataset(const std::string &fileName, OpenMode openMode);
+    Dataset(const std::string &fileName, const Metadata &metadata);
     ~Dataset();
 
     std::vector<LayerType> getLayerTypes() const;
@@ -46,7 +46,7 @@ private:
     Data *m_pData;
 
     friend class Layer;
-    friend class Metadata2;
+    friend class MetadataV2;
     friend class TracklingList;
 };
 

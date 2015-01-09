@@ -10,7 +10,7 @@
 #ifndef BAG_METADATATYPES_H
 #define BAG_METADATATYPES_H
 
-#include "bagstdint.h"
+#include "bag_stdint.h"
 #include "bag_config.h"
 
 /* Value to which floats and ints will be initialized. */
@@ -306,11 +306,6 @@ typedef struct
     BAG_SECURITY_CONSTRAINTS *securityConstraints;
 }
 BAG_METADATA;
-
-BAG_EXTERNAL bagError bagInitMetadata(BAG_METADATA * metadata);
-BAG_EXTERNAL void bagFreeMetadata(BAG_METADATA * metadata);
-
-BAG_EXTERNAL void bagSetHomeFolder(const char *metadataFolder);
 
 #endif  //BAG_METADATATYPES_H
 

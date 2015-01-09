@@ -1,9 +1,28 @@
 #include "bag_interleavedlayer.h"
-#include "bag.h"
 #include "bag_private.h"
 
 namespace BAG
 {
+
+namespace
+{
+
+typedef struct
+{
+    float hyp_strength;
+    uint32_t num_hypotheses;
+
+} bagOptNodeGroup;
+
+typedef struct
+{
+    float shoal_elevation;
+    float stddev;
+    uint32_t num_soundings;
+
+} bagOptElevationSolutionGroup;
+    
+}   //namespace
 
 InterleavedLayer::InterleavedLayer(Dataset &dataset, LayerType type, GroupType groupType)
 : Layer(dataset, type, (groupType == NODE) ? NODE_GROUP_PATH : ELEVATION_SOLUTION_GROUP_PATH),

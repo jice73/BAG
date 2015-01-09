@@ -1,11 +1,9 @@
 #ifndef BAG_TRACKINGLIST_H
 #define BAG_TRACKINGLIST_H
 
-#include "bag.h"
 #include "bag_config.h"
 #include "bag_dataset.h"
-
-#include <vector>
+#include "bag_types.h"
 
 namespace BAG
 {
@@ -18,15 +16,11 @@ public:
     TrackingList(Dataset &dataset);
     ~TrackingList();
 
-    std::vector<bagTrackingItem>::iterator begin();
-    std::vector<bagTrackingItem>::const_iterator begin() const;
-    std::vector<bagTrackingItem>::iterator end();
-    std::vector<bagTrackingItem>::const_iterator end() const;
+    int32_t size() const;
+    bagTrackingItem operator[] (const int32_t index) const;
     
 protected:
     Dataset &m_dataset;
-    std::vector<bagTrackingItem> m_trackingItems;
-
 };
 
 }   //BAG

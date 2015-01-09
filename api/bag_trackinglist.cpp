@@ -12,24 +12,15 @@ TrackingList::~TrackingList()
 {
 }
 
-std::vector<bagTrackingItem>::iterator TrackingList::begin()
+int32_t TrackingList::size() const
 {
-    return this->m_trackingItems.begin();
+    return 0;
 }
 
-std::vector<bagTrackingItem>::const_iterator TrackingList::begin() const
+bagTrackingItem TrackingList::operator[] (const int32_t index) const
 {
-    return this->m_trackingItems.begin();
-}
-
-std::vector<bagTrackingItem>::iterator TrackingList::end()
-{
-    return this->m_trackingItems.end();
-}
-
-std::vector<bagTrackingItem>::const_iterator TrackingList::end() const
-{
-    return this->m_trackingItems.end();
+    index;
+    return bagTrackingItem();
 }
 
 }   //namespace BAG

@@ -23,6 +23,10 @@ struct MetadataData : public Data
 
 }   //namespace
 
+MetadataV2::MetadataV2()
+{
+}
+
 MetadataV2::MetadataV2(Dataset &dataset)
 : m_pData(NULL)
 {
@@ -58,26 +62,16 @@ MetadataV2::MetadataV2(Dataset &dataset)
 */
 }
 
-MetadataV2::MetadataV2(const MetadataV2 &other)
-: m_pData(NULL)
-{
-    MetadataData *pOtherData = dynamic_cast<MetadataData *>(other.m_pData);
-
-    H5::H5File *pFile = reinterpret_cast<H5::H5File *>(pOtherData->m_bagDataset.getFile());
-
-    MetadataData *pData = new MetadataData(pOtherData->m_bagDataset);
-    pData->m_pH5Dataset.reset(new H5::DataSet(pFile->openDataSet(METADATA_PATH)));
-    m_pData = pData;
-}
-
 MetadataV2::~MetadataV2()
 {
 }
 
-std::auto_ptr<Metadata> MetadataV2::newCopy() const
+void MetadataV2::loadFromFile(const std::string &fileName)
 {
-    std::auto_ptr<Metadata> pRet(new MetadataV2(*this));
-    return pRet;
+}
+
+void MetadataV2::loadFromBuffer(const std::string &xmlBuffer)
+{
 }
 
 const BAG_METADATA& MetadataV2::getStruct() const

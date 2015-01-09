@@ -7,7 +7,7 @@ namespace BAG
 class Dataset;
 class Layer;
 class Metadata;
-class Metadata2;
+class MetadataV2;
 class TrackingList;
 
 }   //namespace BAG
