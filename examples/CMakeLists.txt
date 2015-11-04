@@ -4,7 +4,7 @@ PROJECT (OPENNS_EXAMPLES)
 #-----------------------------------------------------------------------------
 # Setup include Directories
 #-----------------------------------------------------------------------------
-include_directories(${OPENNS_SOURCE_DIR}/api ${HDF5_INCLUDE_DIR} ${LIBXML_INCLUDE_DIR})
+include_directories(${OPENNS_SOURCE_DIR}/api ${HDF5_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIRS})
 
 IF(MSVC)
 
@@ -17,9 +17,9 @@ IF(MSVC)
 	ENDIF(BUILD_SHARED_LIBS)
 	
 	#if we are building against a shared HDF5, then we need to define this symbol.
-	IF(BUILD_WITH_SHARED_HDF5)
-		add_definitions(/D _HDF5USEDLL_)
-	ENDIF(BUILD_WITH_SHARED_HDF5)
+	#IF(BUILD_WITH_SHARED_HDF5)
+	#	add_definitions(/D _HDF5USEDLL_)
+	#ENDIF(BUILD_WITH_SHARED_HDF5)
 
 ENDIF(MSVC)
 
@@ -27,22 +27,22 @@ ENDIF(MSVC)
 # Define Sources
 #-----------------------------------------------------------------------------
 SET (examples
-    bag_create
-    bag_gencert
+    #bag_create
+    #bag_gencert
     bag_read
-    bag_signcert
-    bag_signfile
-    bag_verifycert
-    bag_verifyfile
+    #bag_signcert
+    #bag_signfile
+    #bag_verifycert
+    #bag_verifyfile
 )
 
 FOREACH (example ${examples})
   
-    ADD_EXECUTABLE (${example} ${example}.c getopt.c excertlib.cpp)
+    ADD_EXECUTABLE (${example} ${example}.cpp getopt.c)
     SET_TARGET_PROPERTIES (${example} PROPERTIES FOLDER examples)
     
     #Link with the bag library.
-    TARGET_LINK_LIBRARIES(${example} bag)
+    TARGET_LINK_LIBRARIES(${example} bag ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
     
     #Add the '_debug' postfix to the samples.
     SET_TARGET_PROPERTIES( ${example}

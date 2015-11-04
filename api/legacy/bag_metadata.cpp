@@ -3,8 +3,8 @@
 //      Open Navigation Surface Working Group, 2013
 //
 //************************************************************************
-#include "bag.h"
-#include "bag_metadata.h"
+//#include "bag.h"
+#include "bag_metadata_struct.h"
 #include "bag_errors.h"
 
 #include <stdio.h>

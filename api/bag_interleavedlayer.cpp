@@ -65,11 +65,11 @@ uint32_t InterleavedLayer::getReadBufferSize(uint32_t rowStart, uint32_t columnS
 uint8_t* InterleavedLayer::read(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint32_t columnEnd, uint8_t *buffer) const
 {
     //Read the complex element.
-    uint8_t *complexBuffer = NULL;
+    uint8_t *complexBuffer = nullptr;
     complexBuffer = Layer::read(rowStart, columnStart, rowEnd, columnEnd, complexBuffer);
 
     //If the output buffer is not initialized, do it now.
-    if (buffer == NULL)
+    if (buffer == nullptr)
     {
         const uint32_t bufferSize = Layer::getReadBufferSize(rowStart, columnStart, rowEnd, columnEnd);
         buffer = new uint8_t[bufferSize];

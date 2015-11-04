@@ -106,8 +106,8 @@ BAG_EXTERNAL bagError bagReadCorrectedNode   (bagHandle bagHandle, uint32_t row,
 BAG_EXTERNAL bagError bagGetNumSurfaceCorrectors (bagHandle hnd_opt, uint32_t *num);
 BAG_EXTERNAL bagError bagGetSurfaceCorrectionTopography(bagHandle hnd, uint8_t *type);
 BAG_EXTERNAL bagError bagCreateCorrectorDataset   (bagHandle hnd, uint32_t numCorrectors, uint8_t type);
-BAG_EXTERNAL bagError bagWriteCorrectorDefinition (bagHandle hnd, bagVerticalCorrectorDef *def);
-BAG_EXTERNAL bagError bagReadCorrectorDefinition  (bagHandle hnd, bagVerticalCorrectorDef *def);
+//BAG_EXTERNAL bagError bagWriteCorrectorDefinition (bagHandle hnd, bagVerticalCorrectorDef *def);
+//BAG_EXTERNAL bagError bagReadCorrectorDefinition  (bagHandle hnd, bagVerticalCorrectorDef *def);
 
 /* Tracking list access */
 BAG_EXTERNAL bagError bagTrackingListLength (bagHandle bagHandle, uint32_t *len);
@@ -120,7 +120,7 @@ BAG_EXTERNAL bagError bagSortTrackingListBySeries (bagHandle bagHandle);
 BAG_EXTERNAL bagError bagSortTrackingListByCode (bagHandle bagHandle);
 
 /* Digital signature */
-BAG_EXTERNAL uint8_t *bagComputeMessageDigest(const char *fileName, uint32_t signatureID, uint32_t *nBytes);
+/*BAG_EXTERNAL uint8_t *bagComputeMessageDigest(const char *fileName, uint32_t signatureID, uint32_t *nBytes);
 BAG_EXTERNAL uint8_t *bagSignMessageDigest(uint8_t *md, uint32_t mdLen, uint8_t *secKey, bagError *errcode);
 BAG_EXTERNAL bagError bagReadCertification(const char *fileName, uint8_t *sig, uint32_t nBuffer, uint32_t *sigID);
 BAG_EXTERNAL bagError bagWriteCertification(const char *fileName, uint8_t *sig, uint32_t sigID);
@@ -130,11 +130,12 @@ BAG_EXTERNAL bool bagSignFile(const char *fileName, uint8_t *secKey, uint32_t si
 BAG_EXTERNAL bool bagVerifyFile(const char *fileName, uint8_t *pubKey, uint32_t sigID);
 BAG_EXTERNAL bagError bagGenerateKeyPair(uint8_t **pubKey, uint8_t **secKey);
 BAG_EXTERNAL bagError bagConvertCryptoFormat(uint8_t *object, bagCryptoObject objType, bagConvDir convDir, uint8_t **converted);
+*/
 
 /* Metadata */
-BAG_EXTERNAL bagError bagInitMetadata(BAG_METADATA * metadata);
+/*BAG_EXTERNAL bagError bagInitMetadata(BAG_METADATA * metadata);
 BAG_EXTERNAL void bagFreeMetadata(BAG_METADATA * metadata);
-BAG_EXTERNAL void bagSetHomeFolder(const char *metadataFolder);
+BAG_EXTERNAL void bagSetHomeFolder(const char *metadataFolder);*/
 
 #endif // BAG_USE_LEGACY_API
 

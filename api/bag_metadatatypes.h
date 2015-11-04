@@ -12,6 +12,7 @@
 
 #include "bag_stdint.h"
 #include "bag_config.h"
+#include "bag_c_types.h"
 
 /* Value to which floats and ints will be initialized. */
 #define INIT_VALUE  -999    
@@ -306,6 +307,9 @@ typedef struct
     BAG_SECURITY_CONSTRAINTS *securityConstraints;
 }
 BAG_METADATA;
+
+bagError bagInitMetadata(BAG_METADATA * metadata);
+void bagFreeMetadata(BAG_METADATA * metadata);
 
 #endif  //BAG_METADATATYPES_H
 

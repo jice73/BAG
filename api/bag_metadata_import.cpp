@@ -3,8 +3,8 @@
 //      Open Navigation Surface Working Group, 2013
 //
 //************************************************************************
-#include "bag_metadata.h"
-#include "bag_legacy.h"
+#include "bag_metadata_import.h"
+#include "bag_legacy_crs.h"
 #include "bag_errors.h"
 
 #include <iostream>
@@ -18,9 +18,9 @@
 #include <libxml/xpathInternals.h>
 #include <libxml/xmlschemas.h>
 
-extern Bool initResponsibleParty(BAG_RESPONSIBLE_PARTY * responsibleParty);
-extern Bool initSourceInfo(BAG_SOURCE * sourceInfo);
-extern Bool initProcessStep(BAG_PROCESS_STEP * processStep);
+extern bool initResponsibleParty(BAG_RESPONSIBLE_PARTY * responsibleParty);
+extern bool initSourceInfo(BAG_SOURCE * sourceInfo);
+extern bool initProcessStep(BAG_PROCESS_STEP * processStep);
 
 namespace
 {
@@ -282,14 +282,14 @@ std::string getContents(const xmlNode &current)
         a node matching \e searchPath cannot be found.
 */
 //************************************************************************
-u8* getPropertyAsString(const xmlNode &node, const char *searchPath, const char * propertyName)
+char* getPropertyAsString(const xmlNode &node, const char *searchPath, const char * propertyName)
 {
     const xmlNode *pNode = findNode(node, searchPath);
     if (pNode == NULL)
         return NULL;
 
     const std::string &value = getProperty(*pNode, propertyName);
-    return (u8*)_strdup(value.c_str());
+    return (char*)_strdup(value.c_str());
 }
 
 //************************************************************************
@@ -305,14 +305,14 @@ u8* getPropertyAsString(const xmlNode &node, const char *searchPath, const char 
         a node matching \e searchPath cannot be found.
 */
 //************************************************************************
-u8* getContentsAsString(const xmlNode &node, const char *searchPath)
+char* getContentsAsString(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
     if (pNode == NULL)
         return NULL;
 
     const std::string &value = getContents(*pNode);
-    return (u8*)_strdup(value.c_str());
+    return (char*)_strdup(value.c_str());
 }
 
 //************************************************************************
@@ -328,14 +328,14 @@ u8* getContentsAsString(const xmlNode &node, const char *searchPath)
         a node matching \e searchPath cannot be found.
 */
 //************************************************************************
-s32 getContentsAsInt(const xmlNode &node, const char *searchPath)
+int32_t getContentsAsInt(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
     if (pNode == NULL)
         return 0;
 
     const std::string &value = getContents(*pNode);
-    return (s32)toDouble(value);
+    return (int32_t)toDouble(value);
 }
 
 //************************************************************************
@@ -351,7 +351,7 @@ s32 getContentsAsInt(const xmlNode &node, const char *searchPath)
         0.0 is returned if a node matching \e searchPath cannot be found.
 */
 //************************************************************************
-f64 getContentsAsFloat(const xmlNode &node, const char *searchPath)
+double getContentsAsFloat(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
     if (pNode == NULL)
@@ -374,14 +374,14 @@ f64 getContentsAsFloat(const xmlNode &node, const char *searchPath)
     matching \e searchPath cannot be found.
 */
 //************************************************************************
-Bool getContentsAsBool(const xmlNode &node, const char *searchPath)
+bool getContentsAsBool(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
     if (pNode == NULL)
-        return False;
+        return false;
 
     const std::string &value = getContents(*pNode);
-    return (value == "0" || value == "false") ? False : True;
+    return (value == "0" || value == "false") ? false : true;
 }
 
 }   //namespace
@@ -419,9 +419,9 @@ std::string bagGetHomeFolder()
     \li The new location for the BAG home directory.
 */
 //************************************************************************
-void bagSetHomeFolder(const u8 *homeFolder)
+void bagSetHomeFolder(const char *homeFolder)
 {
-    bagHomeFolder = (const char *)homeFolder;
+    bagHomeFolder = homeFolder;
 }
 
 //************************************************************************
@@ -438,7 +438,7 @@ void bagSetHomeFolder(const u8 *homeFolder)
         an error occurs.
 */
 //************************************************************************
-Bool decodeResponsibleParty(const xmlNode &node, BAG_RESPONSIBLE_PARTY * responsibleParty, u16 schemaVersion)
+bool decodeResponsibleParty(const xmlNode &node, BAG_RESPONSIBLE_PARTY * responsibleParty, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -469,7 +469,7 @@ Bool decodeResponsibleParty(const xmlNode &node, BAG_RESPONSIBLE_PARTY * respons
         responsibleParty->role = getContentsAsString(node, "gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode");
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -486,7 +486,7 @@ Bool decodeResponsibleParty(const xmlNode &node, BAG_RESPONSIBLE_PARTY * respons
         an error occurs.
 */
 //************************************************************************
-Bool decodeLegalConstraints(const xmlNode &node, BAG_LEGAL_CONSTRAINTS * legalConstraints, u16 schemaVersion)
+bool decodeLegalConstraints(const xmlNode &node, BAG_LEGAL_CONSTRAINTS * legalConstraints, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -505,7 +505,7 @@ Bool decodeLegalConstraints(const xmlNode &node, BAG_LEGAL_CONSTRAINTS * legalCo
         legalConstraints->otherConstraints = getContentsAsString(node, "gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString");
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -522,7 +522,7 @@ Bool decodeLegalConstraints(const xmlNode &node, BAG_LEGAL_CONSTRAINTS * legalCo
         an error occurs.
 */
 //************************************************************************
-Bool decodeSecurityConstraints(const xmlNode &node, BAG_SECURITY_CONSTRAINTS * securityConstraints, u16 schemaVersion)
+bool decodeSecurityConstraints(const xmlNode &node, BAG_SECURITY_CONSTRAINTS * securityConstraints, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -541,7 +541,7 @@ Bool decodeSecurityConstraints(const xmlNode &node, BAG_SECURITY_CONSTRAINTS * s
         securityConstraints->userNote = getContentsAsString(node, "gmd:MD_SecurityConstraints/gmd:userNote/gco:CharacterString");
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -558,7 +558,7 @@ Bool decodeSecurityConstraints(const xmlNode &node, BAG_SECURITY_CONSTRAINTS * s
         an error occurs.
 */
 //************************************************************************
-Bool decodeSourceInfo(const xmlNode &node, BAG_SOURCE * sourceInfo, u16 schemaVersion)
+bool decodeSourceInfo(const xmlNode &node, BAG_SOURCE * sourceInfo, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -583,19 +583,19 @@ Bool decodeSourceInfo(const xmlNode &node, BAG_SOURCE * sourceInfo, u16 schemaVe
         const std::vector<const xmlNode*> partyNodes = findNodes(node, "gmd:LI_Source/gmd:sourceCitation/gmd:CI_Citation/gmd:citedResponsibleParty");
         if (!partyNodes.empty())
         {
-            sourceInfo->numberOfResponsibleParties = (u32)partyNodes.size();
+            sourceInfo->numberOfResponsibleParties = (uint32_t)partyNodes.size();
             sourceInfo->responsibleParties = (BAG_RESPONSIBLE_PARTY*)malloc(sizeof(BAG_RESPONSIBLE_PARTY) * sourceInfo->numberOfResponsibleParties);
 
-            for (u32 i = 0; i < sourceInfo->numberOfResponsibleParties; i++)
+            for (uint32_t i = 0; i < sourceInfo->numberOfResponsibleParties; i++)
             {
                 initResponsibleParty(&sourceInfo->responsibleParties[i]);
                 if (!decodeResponsibleParty(*partyNodes[i], &sourceInfo->responsibleParties[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -612,7 +612,7 @@ Bool decodeSourceInfo(const xmlNode &node, BAG_SOURCE * sourceInfo, u16 schemaVe
         an error occurs.
 */
 //************************************************************************
-Bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, u16 schemaVersion)
+bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -629,14 +629,14 @@ Bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, u16 
         const std::vector<const xmlNode*> processorNodes = findNodes(node, "smXML:BAG_ProcessStep/processor");
         if (!processorNodes.empty())
         {
-            processStep->numberOfProcessors = (u32)processorNodes.size();
+            processStep->numberOfProcessors = (uint32_t)processorNodes.size();
             processStep->processors = (BAG_RESPONSIBLE_PARTY*)malloc(sizeof(BAG_RESPONSIBLE_PARTY) * processStep->numberOfProcessors);
 
-            for (u32 i = 0; i < processStep->numberOfProcessors; i++)
+            for (uint32_t i = 0; i < processStep->numberOfProcessors; i++)
             {
                 initResponsibleParty(&processStep->processors[i]);
                 if (!decodeResponsibleParty(*processorNodes[i], &processStep->processors[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
 
@@ -644,14 +644,14 @@ Bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, u16 
         const std::vector<const xmlNode*> sourceNodes = findNodes(node, "parent::*/source");
         if (!sourceNodes.empty())
         {
-            processStep->numberOfSources = (u32)sourceNodes.size();
+            processStep->numberOfSources = (uint32_t)sourceNodes.size();
             processStep->lineageSources = (BAG_SOURCE*)malloc(sizeof(BAG_SOURCE) * processStep->numberOfSources);
 
-            for (u32 i = 0; i < processStep->numberOfSources; i++)
+            for (uint32_t i = 0; i < processStep->numberOfSources; i++)
             {
                 initSourceInfo(&processStep->lineageSources[i]);
                 if (!decodeSourceInfo(*sourceNodes[i], &processStep->lineageSources[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
     }
@@ -670,14 +670,14 @@ Bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, u16 
         const std::vector<const xmlNode*> processorNodes = findNodes(node, "//gmd:processor");
         if (!processorNodes.empty())
         {
-            processStep->numberOfProcessors = (u32)processorNodes.size();
+            processStep->numberOfProcessors = (uint32_t)processorNodes.size();
             processStep->processors = (BAG_RESPONSIBLE_PARTY*)malloc(sizeof(BAG_RESPONSIBLE_PARTY) * processStep->numberOfProcessors);
 
-            for (u32 i = 0; i < processStep->numberOfProcessors; i++)
+            for (uint32_t i = 0; i < processStep->numberOfProcessors; i++)
             {
                 initResponsibleParty(&processStep->processors[i]);
                 if (!decodeResponsibleParty(*processorNodes[i], &processStep->processors[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
 
@@ -685,19 +685,19 @@ Bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, u16 
         const std::vector<const xmlNode*> sourceNodes = findNodes(node, "//gmd:source");
         if (!sourceNodes.empty())
         {
-            processStep->numberOfSources = (u32)sourceNodes.size();
+            processStep->numberOfSources = (uint32_t)sourceNodes.size();
             processStep->lineageSources = (BAG_SOURCE*)malloc(sizeof(BAG_SOURCE) * processStep->numberOfSources);
 
-            for (u32 i = 0; i < processStep->numberOfSources; i++)
+            for (uint32_t i = 0; i < processStep->numberOfSources; i++)
             {
                 initSourceInfo(&processStep->lineageSources[i]);
                 if (!decodeSourceInfo(*sourceNodes[i], &processStep->lineageSources[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -714,7 +714,7 @@ Bool decodeProcessStep(const xmlNode &node, BAG_PROCESS_STEP * processStep, u16 
         an error occurs.
 */
 //************************************************************************
-Bool decodeDataQualityInfo(const xmlNode &node, BAG_DATA_QUALITY * dataQualityInfo, u16 schemaVersion)
+bool decodeDataQualityInfo(const xmlNode &node, BAG_DATA_QUALITY * dataQualityInfo, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -725,14 +725,14 @@ Bool decodeDataQualityInfo(const xmlNode &node, BAG_DATA_QUALITY * dataQualityIn
         const std::vector<const xmlNode*> stepNodes = findNodes(node, "smXML:DQ_DataQuality/lineage/smXML:LI_Lineage/processStep");
         if (!stepNodes.empty())
         {
-            dataQualityInfo->numberOfProcessSteps = (u32)stepNodes.size();
+            dataQualityInfo->numberOfProcessSteps = (uint32_t)stepNodes.size();
             dataQualityInfo->lineageProcessSteps = (BAG_PROCESS_STEP*)malloc(sizeof(BAG_PROCESS_STEP) * dataQualityInfo->numberOfProcessSteps);
 
-            for (u32 i = 0; i < dataQualityInfo->numberOfProcessSteps; i++)
+            for (uint32_t i = 0; i < dataQualityInfo->numberOfProcessSteps; i++)
             {
                 initProcessStep(&dataQualityInfo->lineageProcessSteps[i]);
                 if (!decodeProcessStep(*stepNodes[i], &dataQualityInfo->lineageProcessSteps[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
     }
@@ -745,19 +745,19 @@ Bool decodeDataQualityInfo(const xmlNode &node, BAG_DATA_QUALITY * dataQualityIn
         const std::vector<const xmlNode*> stepNodes = findNodes(node, "gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:processStep");
         if (!stepNodes.empty())
         {
-            dataQualityInfo->numberOfProcessSteps = (u32)stepNodes.size();
+            dataQualityInfo->numberOfProcessSteps = (uint32_t)stepNodes.size();
             dataQualityInfo->lineageProcessSteps = (BAG_PROCESS_STEP*)malloc(sizeof(BAG_PROCESS_STEP) * dataQualityInfo->numberOfProcessSteps);
 
-            for (u32 i = 0; i < dataQualityInfo->numberOfProcessSteps; i++)
+            for (uint32_t i = 0; i < dataQualityInfo->numberOfProcessSteps; i++)
             {
                 initProcessStep(&dataQualityInfo->lineageProcessSteps[i]);
                 if (!decodeProcessStep(*stepNodes[i], &dataQualityInfo->lineageProcessSteps[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -774,7 +774,7 @@ Bool decodeDataQualityInfo(const xmlNode &node, BAG_DATA_QUALITY * dataQualityIn
         an error occurs.
 */
 //************************************************************************
-Bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTATION * spatialRepresentationInfo, u16 schemaVersion)
+bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTATION * spatialRepresentationInfo, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -803,7 +803,7 @@ Bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTA
         {
             const xmlNode *pNode = findNode(node, "smXML:MD_Georectified/cornerPoints/gml:Point/gml:coordinates");
             if (pNode == NULL)
-                return False;
+                return false;
 
             //Get the encoded corner values.
             const std::string &value = getContents(*pNode);
@@ -850,7 +850,7 @@ Bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTA
         {
             const xmlNode *pNode = findNode(node, "gmd:MD_Georectified/gmd:cornerPoints/gml:Point/gml:coordinates");
             if (pNode == NULL)
-                return False;
+                return false;
 
             //Get the encoded corner values.
             const std::string &value = getContents(*pNode);
@@ -861,7 +861,7 @@ Bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTA
         }
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -878,7 +878,7 @@ Bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTA
         an error occurs.
 */
 //************************************************************************
-Bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * dataIdentificationInfo, u16 schemaVersion)
+bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * dataIdentificationInfo, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
@@ -895,14 +895,14 @@ Bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * data
         const std::vector<const xmlNode*> partyNodes = findNodes(node, "smXML:BAG_DataIdentification/citation/smXML:CI_Citation/citedResponsibleParty");
         if (!partyNodes.empty())
         {
-            dataIdentificationInfo->numberOfResponsibleParties = (u32)partyNodes.size();
+            dataIdentificationInfo->numberOfResponsibleParties = (uint32_t)partyNodes.size();
             dataIdentificationInfo->responsibleParties = (BAG_RESPONSIBLE_PARTY*)malloc(sizeof(BAG_RESPONSIBLE_PARTY) * dataIdentificationInfo->numberOfResponsibleParties);
 
-            for (u32 i = 0; i < dataIdentificationInfo->numberOfResponsibleParties; i++)
+            for (uint32_t i = 0; i < dataIdentificationInfo->numberOfResponsibleParties; i++)
             {
                 initResponsibleParty(&dataIdentificationInfo->responsibleParties[i]);
                 if (!decodeResponsibleParty(*partyNodes[i], &dataIdentificationInfo->responsibleParties[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
 
@@ -919,7 +919,7 @@ Bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * data
         dataIdentificationInfo->language = getContentsAsString(node, "smXML:BAG_DataIdentification/language");
 
         //Doesn't appear to be set, so always set to utf8
-        dataIdentificationInfo->character_set = (u8*)strdup("utf8");
+        dataIdentificationInfo->character_set = (char*)strdup("utf8");
 
         //smXML:BAG_DataIdentification/topicCategory
         dataIdentificationInfo->topicCategory = getContentsAsString(node, "smXML:BAG_DataIdentification/topicCategory");
@@ -961,14 +961,14 @@ Bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * data
         const std::vector<const xmlNode*> partyNodes = findNodes(node, "bag:BAG_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty");
         if (!partyNodes.empty())
         {
-            dataIdentificationInfo->numberOfResponsibleParties = (u32)partyNodes.size();
+            dataIdentificationInfo->numberOfResponsibleParties = (uint32_t)partyNodes.size();
             dataIdentificationInfo->responsibleParties = (BAG_RESPONSIBLE_PARTY*)malloc(sizeof(BAG_RESPONSIBLE_PARTY) * dataIdentificationInfo->numberOfResponsibleParties);
 
-            for (u32 i = 0; i < dataIdentificationInfo->numberOfResponsibleParties; i++)
+            for (uint32_t i = 0; i < dataIdentificationInfo->numberOfResponsibleParties; i++)
             {
                 initResponsibleParty(&dataIdentificationInfo->responsibleParties[i]);
                 if (!decodeResponsibleParty(*partyNodes[i], &dataIdentificationInfo->responsibleParties[i], schemaVersion))
-                    return False;
+                    return false;
             }
         }
 
@@ -1013,7 +1013,7 @@ Bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * data
         dataIdentificationInfo->elevationSolutionGroupType = getContentsAsString(node, "bag:BAG_DataIdentification/bag:elevationSolutionGroupType/bag:BAG_OptGroupCode");
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -1031,9 +1031,9 @@ Bool decodeDataIdentificationInfo(const xmlNode &node, BAG_IDENTIFICATION * data
         the optional tag is not present in the header or an error occurs.
 */
 //************************************************************************
-Bool decodeReferenceSystemInfoFromSpatial( const BAG_SPATIAL_REPRESENTATION * spatialRepresentationInfo, BAG_REFERENCE_SYSTEM * referenceSystemInfo, u16 schemaVersion)
+bool decodeReferenceSystemInfoFromSpatial(const BAG_SPATIAL_REPRESENTATION * spatialRepresentationInfo, BAG_REFERENCE_SYSTEM * referenceSystemInfo, uint16_t schemaVersion)
 {
-    u32 epsg;
+    uint32_t epsg;
     char * equal;
     char buffer[2048];
     if ( spatialRepresentationInfo && referenceSystemInfo )
@@ -1050,14 +1050,14 @@ Bool decodeReferenceSystemInfoFromSpatial( const BAG_SPATIAL_REPRESENTATION * sp
                 if ( epsg && strncmp((char*)spatialRepresentationInfo->transformationDimensionDescription, "EPSG", 4) == 0 )
                 {
                     sprintf( buffer, "%d", epsg );
-                    referenceSystemInfo->definition = (u8*)strdup(buffer);
-                    referenceSystemInfo->type = (u8*)strdup("EPSG");
-                    return True;
+                    referenceSystemInfo->definition = (char*)strdup(buffer);
+                    referenceSystemInfo->type = (char*)strdup("EPSG");
+                    return true;
                 }
             }
         }
     }
-    return False;
+    return false;
 }
 
 
@@ -1075,22 +1075,22 @@ Bool decodeReferenceSystemInfoFromSpatial( const BAG_SPATIAL_REPRESENTATION * sp
         an error occurs.
 */
 //************************************************************************
-Bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * referenceSystemInfo, u16 schemaVersion)
+bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * referenceSystemInfo, uint16_t schemaVersion)
 {
     if (schemaVersion == 1)
     {
         //If I have an ellipsoid, then this must be horizontal.
-        u8 *ellipsoid = getContentsAsString(node, "smXML:MD_CRS/ellipsoid/smXML:RS_Identifier/code");
+        char *ellipsoid = getContentsAsString(node, "smXML:MD_CRS/ellipsoid/smXML:RS_Identifier/code");
         if (ellipsoid != NULL)
         {
-            u8 *projectionId = getContentsAsString(node, "smXML:MD_CRS/projection/smXML:RS_Identifier/code");
-            u8 *datumId = getContentsAsString(node, "smXML:MD_CRS/datum/smXML:RS_Identifier/code");
+            char *projectionId = getContentsAsString(node, "smXML:MD_CRS/projection/smXML:RS_Identifier/code");
+            char *datumId = getContentsAsString(node, "smXML:MD_CRS/datum/smXML:RS_Identifier/code");
 
             bagLegacyReferenceSystem v1Def;
             memset(&v1Def, 0, sizeof(bagLegacyReferenceSystem));
 
             //Store the projection information.
-            v1Def.coordSys = bagCoordsys((char*)projectionId);
+            v1Def.coordSys = bagCoordsys(projectionId);
             free(projectionId);
 
             //Store the ellipsoid information.
@@ -1128,15 +1128,15 @@ Bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * refer
             char buffer[2048];
             bagError error = bagLegacyToWkt(v1Def, buffer, 2048, NULL, 0);
             if (error)
-                return False;
+                return false;
 
-            referenceSystemInfo->definition = (u8*)strdup(buffer);
-            referenceSystemInfo->type = (u8*)strdup("WKT");
+            referenceSystemInfo->definition = (char*)strdup(buffer);
+            referenceSystemInfo->type = (char*)strdup("WKT");
         }
         //Else it must be vertical.
         else
         {
-            u8 *datum = getContentsAsString(node, "smXML:MD_CRS/datum/smXML:RS_Identifier/code");
+            char *datum = getContentsAsString(node, "smXML:MD_CRS/datum/smXML:RS_Identifier/code");
             
             bagLegacyReferenceSystem system;
             strncpy((char *)system.geoParameters.vertical_datum, (const char*)datum, 256);
@@ -1145,10 +1145,10 @@ Bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * refer
             char buffer[1024];
             bagError error = bagLegacyToWkt(system, NULL, 0, buffer, 1024);
             if (error)
-                return False;
+                return false;
 
-            referenceSystemInfo->definition = (u8*)strdup(buffer);
-            referenceSystemInfo->type = (u8*)strdup("WKT");
+            referenceSystemInfo->definition = (char*)strdup(buffer);
+            referenceSystemInfo->type = (char*)strdup("WKT");
         }
     }
     else if (schemaVersion == 2)
@@ -1160,7 +1160,7 @@ Bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * refer
         referenceSystemInfo->type = getContentsAsString(node, "gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace/gco:CharacterString");
     }
 
-    return True;
+    return true;
 }
 
 //************************************************************************
@@ -1261,10 +1261,10 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     metadata->language = getContentsAsString(*pRoot, "/smXML:MD_Metadata/language");
 
     //gmd:characterSet
-    metadata->characterSet = (u8*)strdup("eng");
+    metadata->characterSet = (char*)strdup("eng");
 
     //gmd:hierarchyLevel
-    metadata->hierarchyLevel = (u8*)strdup("dataset");
+    metadata->hierarchyLevel = (char*)strdup("dataset");
     
     //gmd:contact
     {
@@ -1327,7 +1327,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
             if (pNode2 == NULL)
                 return BAG_METADTA_MISSING_MANDATORY_ITEM;
 
-            u8 *datum = getContentsAsString(*pNode2, "smXML:RS_Identifier/code");
+            char *datum = getContentsAsString(*pNode2, "smXML:RS_Identifier/code");
             if (datum == NULL)
                 return BAG_METADTA_MISSING_MANDATORY_ITEM;
             
@@ -1340,8 +1340,8 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
             if (error)
                 return error;
 
-            metadata->verticalReferenceSystem->definition = (u8*)strdup(buffer);
-            metadata->verticalReferenceSystem->type = (u8*)strdup("WKT");
+            metadata->verticalReferenceSystem->definition = (char*)strdup(buffer);
+            metadata->verticalReferenceSystem->type = (char*)strdup("WKT");
         }
         else if (!decodeReferenceSystemInfo(*pNode, metadata->verticalReferenceSystem, 1))
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
@@ -1357,12 +1357,12 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
         //If we have a projection, then it must be metres (its all we supported in the past)
         if (horizontalWKT.find("PROJCS[") >= 0)
         {
-            metadata->spatialRepresentationInfo->resolutionUnit = (u8*)strdup("Metre");
+            metadata->spatialRepresentationInfo->resolutionUnit = (char*)strdup("Metre");
         }
         //Else it must be geographic
         else
         {
-            metadata->spatialRepresentationInfo->resolutionUnit = (u8*)strdup("Degree");
+            metadata->spatialRepresentationInfo->resolutionUnit = (char*)strdup("Degree");
         }
     }
 
@@ -1578,7 +1578,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
         is True).
 */
 //************************************************************************
-bagError bagImportMetadataFromXml(xmlDoc &document, BAG_METADATA * metadata, Bool doValidation)
+bagError bagImportMetadataFromXml(xmlDoc &document, BAG_METADATA * metadata, bool doValidation)
 {
     if (metadata == NULL)
         return BAG_METADTA_INVALID_HANDLE;
@@ -1599,7 +1599,7 @@ bagError bagImportMetadataFromXml(xmlDoc &document, BAG_METADATA * metadata, Boo
     const std::string rootName = getNodeName(*pRoot);
 
     //We will use the root node's name to figure out what version of the schema we are working with.
-    const u16 schemaVersion = (rootName == "smXML:MD_Metadata") ? 1 : 2;
+    const uint16_t schemaVersion = (rootName == "smXML:MD_Metadata") ? 1 : 2;
 
     return (schemaVersion == 1) ? bagImportMetadataFromXmlV1(document, metadata) :
         bagImportMetadataFromXmlV2(document, metadata);
@@ -1627,9 +1627,9 @@ bagError bagImportMetadataFromXml(xmlDoc &document, BAG_METADATA * metadata, Boo
         if the validation fails.
 */
 //************************************************************************
-bagError bagImportMetadataFromXmlBuffer(const u8 *xmlBuffer, u32 bufferSize, BAG_METADATA * metadata, Bool doValidation)
+bagError bagImportMetadataFromXmlBuffer(const char *xmlBuffer, uint32_t bufferSize, BAG_METADATA * metadata, bool doValidation)
 {
-    xmlDoc *pDocument = xmlParseMemory((const char *)xmlBuffer, bufferSize);
+    xmlDoc *pDocument = xmlParseMemory(xmlBuffer, bufferSize);
     if (pDocument == NULL)
         return BAG_METADTA_NOT_INITIALIZED;
 
@@ -1655,9 +1655,9 @@ bagError bagImportMetadataFromXmlBuffer(const u8 *xmlBuffer, u32 bufferSize, BAG
         if the validation fails.
 */
 //************************************************************************
-bagError bagImportMetadataFromXmlFile(const u8 *fileName, BAG_METADATA * metadata, Bool doValidation)
+bagError bagImportMetadataFromXmlFile(const char *fileName, BAG_METADATA * metadata, bool doValidation)
 {
-    xmlDoc *pDocument = xmlParseFile((const char *)fileName); 
+    xmlDoc *pDocument = xmlParseFile(fileName); 
     if (pDocument == NULL)
         return BAG_METADTA_NOT_INITIALIZED;
 

@@ -35,7 +35,7 @@ protected:
 
 private:
     
-    Data *m_pData;
+    Data *m_pData = nullptr;
 
     friend class Dataset;
 };

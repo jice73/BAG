@@ -49,7 +49,7 @@ ENDIF (BUILD_SHARED_LIBS)
 #-----------------------------------------------------------------------------
 # Option to Build against Shared/Static version of HDF5, default is shared
 #-----------------------------------------------------------------------------
-OPTION (BUILD_WITH_SHARED_HDF5 "Build with HDF5 as a shared library" ON)
+#OPTION (BUILD_WITH_SHARED_HDF5 "Build with HDF5 as a shared library" ON)
 
 # Recurse into the "api" and "examples" subdirectories. This does not actually
 # cause another cmake executable to run. The same process will walk through

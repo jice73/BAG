@@ -2,6 +2,7 @@
 #include "bag_private.h"
 
 #include <h5cpp.h>
+#include <memory>
 
 namespace BAG
 {
@@ -25,7 +26,7 @@ struct LayerData : public Data
     int32_t m_internalTypeId;
     LayerType m_type;
     Dataset &m_bagDataset;
-    std::auto_ptr<H5::DataSet> m_pH5Dataset;
+    std::unique_ptr<H5::DataSet> m_pH5Dataset;
 };
 
 DataType layerType2DataType(LayerType layerType)
@@ -36,7 +37,7 @@ DataType layerType2DataType(LayerType layerType)
     case Uncertainty:
     case Hypothesis_Strength:
     case Shoal_Elevation:
-	case Std_Dev:
+    case Std_Dev:
     case Average_Elevation:
     case Nominal_Elevation:
         return FLOAT32;
@@ -116,12 +117,12 @@ const char* Layer::getInternalPath(LayerType type)
         return NOMINAL_ELEVATION_PATH;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 const char* Layer::getName() const
 {
-    return NULL;
+    return nullptr;
 }
 
 DataType Layer::getDataType() const
@@ -176,7 +177,7 @@ uint8_t* Layer::read(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, u
         columnStart > columnEnd)
     {
         //Throw
-        return NULL;
+        return nullptr;
     }
 
     hsize_t	dims[RANK];
@@ -191,7 +192,7 @@ uint8_t* Layer::read(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, u
     fileSpace.offsetSimple(offset);
     //fileSpace.selectHyperslab (H5S_SELECT_SET, dims, offset);
 
-    if (buffer == NULL)
+    if (buffer == nullptr)
     {
         const uint32_t bufferSize = this->getReadBufferSize(rowStart, columnStart, rowEnd, columnEnd);
         buffer = new uint8_t[bufferSize];
@@ -218,7 +219,7 @@ void Layer::write(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint
         return;
     }
 
-    if (buffer == NULL)
+    if (buffer == nullptr)
     {
         //Throw
         return;

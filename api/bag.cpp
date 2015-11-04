@@ -268,7 +268,7 @@ bagError bagCreateCorrectorDataset   (bagHandle handle, uint32_t numCorrectors, 
 {
     return 0;
 }
-
+/*
 bagError bagWriteCorrectorDefinition (bagHandle handle, bagVerticalCorrectorDef *def)
 {
     return 0;
@@ -278,7 +278,7 @@ bagError bagReadCorrectorDefinition  (bagHandle handle, bagVerticalCorrectorDef 
 {
     return 0;
 }
-
+*/
 bagError bagTrackingListLength (bagHandle handle, uint32_t *len)
 {
     return 0;
@@ -318,7 +318,7 @@ bagError bagSortTrackingListByCode (bagHandle handle)
 {
     return 0;
 }
-
+/*
 uint8_t *bagComputeMessageDigest(const char *file, uint32_t signatureID, uint32_t *nBytes)
 {
     return NULL;
@@ -368,3 +368,4 @@ bagError bagConvertCryptoFormat(uint8_t *object, bagCryptoObject objType, bagCon
 {
     return 0;
 }
+*/

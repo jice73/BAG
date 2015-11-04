@@ -43,10 +43,10 @@ protected:
 
 private:
 
-    Data *m_pData;
+    Data *m_pData = nullptr;
 
     friend class Layer;
-    friend class MetadataV2;
+    friend class Metadata;
     friend class TracklingList;
 };
 

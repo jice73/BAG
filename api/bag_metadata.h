@@ -2,6 +2,7 @@
 #define BAG_METADATA_H
 
 #include "bag_config.h"
+#include "bag_dataset.h"
 #include "bag_metadatatypes.h"
 
 namespace BAG
@@ -10,13 +11,19 @@ namespace BAG
 class BAG_API Metadata
 {
 public:
-    virtual ~Metadata();
-
-    virtual const BAG_METADATA& getStruct() const = 0;
-
-protected:
     Metadata();
+    explicit Metadata(Dataset &dataset);
+    Metadata(const Metadata &other) = delete;
+    ~Metadata();
 
+    const BAG_METADATA& getStruct() const;
+
+    void loadFromFile(const std::string &fileName);
+    void loadFromBuffer(const std::string &xmlBuffer);
+
+private:
+    
+    Data *m_pData = nullptr;
 };
 
 }   //namespace BAG

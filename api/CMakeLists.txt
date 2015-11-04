@@ -1,64 +1,5 @@
-# 
-# Hdf5 Settings
-#
-IF(MSVC)
-# The location of the Hdf5 header files.
-SET(HDF5_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extlibs/hdf5/installed/include" CACHE PATH "Location of hdf5 header files.")
-# The name of the Hdf5 release library.
-SET(HDF5_LIB "optimized;${PROJECT_SOURCE_DIR}/extlibs/hdf5/installed/lib/hdf5dll.lib;debug;${PROJECT_SOURCE_DIR}/extlibs/hdf5/installed/lib/hdf5ddll.lib" CACHE STRING "The name of the hdf5 release library.")
-ELSEIF(UNIX)
-# The location of the Hdf5 header files.
-SET(HDF5_INCLUDE_DIR "/usr/include" CACHE PATH "Location of hdf5 header files.")
-# The name of the Hdf5 release library.
-SET(HDF5_LIB "hdf5" CACHE STRING "The name of the hdf5 release library.")
-ELSEIF(MINGW)
-# The location of the Hdf5 header files.
-SET(HDF5_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extlibs/hdf5/installed/include" CACHE PATH "Location of hdf5 header files.")
-# The name of the Hdf5 release library.
-SET(HDF5_LIB "${PROJECT_SOURCE_DIR}/extlibs/hdf5/installed/lib/hdf5" CACHE STRING "The name of the hdf5 release library.")
-ENDIF(MSVC)
 
-# 
-# beecrypt Settings
-#
-IF(MSVC)
-# The location of the beecrypt header files.
-SET(BEECRYPT_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extlibs/" CACHE PATH "Location of beecrypt header files.")
-# The name of the beecrypt release library.
-SET(BEECRYPT_LIB "optimized;${PROJECT_SOURCE_DIR}/extlibs/beecrypt/beecrypt.lib;debug;${PROJECT_SOURCE_DIR}/extlibs/beecrypt/beecryptd.lib" CACHE STRING "The name of the beecrypt release library.")
-ELSEIF(UNIX)
-# The location of the beecrypt header files.
-SET(BEECRYPT_INCLUDE_DIR "/usr/include" CACHE PATH "Location of beecrypt header files.")
-# The name of the beecrypt release library.
-SET(BEECRYPT_LIB "beecrypt" CACHE STRING "The name of the beecrypt release library.")
-ELSEIF(MINGW)
-# The location of the beecrypt header files.
-SET(BEECRYPT_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extlibs/beecrypt/installed/include/" CACHE PATH "Location of beecrypt header files.")
-# The name of the beecrypt release library.
-SET(BEECRYPT_LIB "${PROJECT_SOURCE_DIR}/extlibs/beecrypt/installed/lib/beecrypt" CACHE STRING "The name of the beecrypt release library.")
-ENDIF(MSVC)
-
-# 
-# libxml Settings
-#
-IF(MSVC)
-# The location of the libxml2 header files.
-SET(LIBXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extlibs/libxml2/include" CACHE PATH "Location of libxml2 header files.")
-# The name of the libxml2 release library.
-SET(LIBXML_LIB "optimized;${PROJECT_SOURCE_DIR}/extlibs/libxml2/lib/release/libxml2.lib;debug;${PROJECT_SOURCE_DIR}/extlibs/libxml2/lib/debug/libxml2.lib" CACHE STRING "The name of the libxml2 library.")
-ELSEIF(UNIX)
-# The location of the libxml2 header files.
-SET(LIBXML_INCLUDE_DIR "/usr/include" CACHE PATH "Location of libxml2 header files.")
-# The name of the libxml2 release library.
-SET(LIBXML_LIB "libxml2" CACHE STRING "The name of the libxml2 release library.")
-ELSEIF(MINGW)
-# The location of the libxml2 header files.
-SET(LIBXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extlibs/libxml2/installed/include/" CACHE PATH "Location of libxml2 header files.")
-# The name of the libxml2 release library.
-SET(LIBXML_LIB "${PROJECT_SOURCE_DIR}/extlibs/libxml2/installed/lib/libxml2" CACHE STRING "The name of the libxml2 release library.")
-ENDIF(MSVC)
-
-include_directories (${HDF5_INCLUDE_DIR} ${BEECRYPT_INCLUDE_DIR} ${LIBXML_INCLUDE_DIR}) 
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "W:/BathyWork/workTrunk/msvc2013/x64/third-party/cmake/hdf5")
 
 #The debug build will have a 'd' postfix
 SET(CMAKE_DEBUG_POSTFIX  "d")
@@ -67,9 +8,6 @@ SET(CMAKE_DEBUG_POSTFIX  "d")
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   SET(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/installed" CACHE PATH "CMAKE_INSTALL_PREFIX" FORCE)
 ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-
-#Use the version 1 interface for HDF5
-add_definitions(-D H5_USE_16_API)
 
 IF(MSVC)
 
@@ -80,41 +18,8 @@ IF(MSVC)
 	IF(BUILD_SHARED_LIBS)
 		add_definitions(/D BAG_DLL /D BAG_EXPORTS)
 	ENDIF(BUILD_SHARED_LIBS)
-	
-	#if we are building against a shared HDF5, then we need to define this symbol.
-	IF(BUILD_WITH_SHARED_HDF5)
-		add_definitions(/D _HDF5USEDLL_)
-	ENDIF(BUILD_WITH_SHARED_HDF5)
-	
-ENDIF(MSVC)
 
-#List all of the bag api source files.
-set (BAG_LEGACY_SOURCE_FILES 
- legacy/bag_attr.c
- legacy/bag_crypto.c
- legacy/bag_hdf.c
- legacy/bag_metadata.cpp
- legacy/bag_metadata_export.cpp
- legacy/bag_metadata_import.cpp
- legacy/bag_legacy.cpp
- legacy/bag_opt_group.c
- legacy/bag_opt_surfaces.c
- legacy/bag_reference_system.cpp
- legacy/bag_surface_correct.c
- legacy/bag_surfaces.c
- legacy/bag_tracking_list.c
- legacy/crc32.c
- legacy/onscrypto.c
- legacy/bag.h
- legacy/bag_metadata.h
- legacy/bag_legacy.h
- legacy/bag_opt_surfaces.h
- legacy/bag_private.h
- legacy/crc32.h
- legacy/dt_cc.h
- legacy/onscrypto.h
- legacy/stdtypes.h)
-source_group("Legacy Source Files" FILES ${BAG_LEGACY_SOURCE_FILES})
+ENDIF(MSVC)
 
 set (BAG_SOURCE_FILES 
  bag_dataset.h
@@ -123,10 +28,14 @@ set (BAG_SOURCE_FILES
  bag_interleavedlayer.cpp
  bag_layer.h
  bag_layer.cpp
+ bag_legacy_crs.h
+ bag_legacy_crs.cpp
  bag_metadata.h
  bag_metadata.cpp
- bag_metadatav2.h
- bag_metadatav2.cpp
+ bag_metadatatypes.h
+ bag_metadatatypes.cpp
+ bag_metadata_import.cpp
+ bag_metadata_import.h
  bag_trackinglist.h
  bag_trackinglist.cpp
  bag_errors.h
@@ -135,11 +44,17 @@ set (BAG_SOURCE_FILES
  bag_types.h)
 source_group("Source Files" FILES ${BAG_SOURCE_FILES})
  
-add_library (bag ${LIB_TYPE} ${BAG_LEGACY_SOURCE_FILES} ${BAG_SOURCE_FILES} )
+add_library (bag ${LIB_TYPE} ${BAG_SOURCE_FILES} )
 
-target_link_libraries(bag ${HDF5_LIB})
-target_link_libraries(bag ${BEECRYPT_LIB})
-target_link_libraries(bag ${LIBXML_LIB})
+#HDF5
+find_package (HDF5 CONFIG REQUIRED hdf5_cpp )
+include_directories (${HDF5_INCLUDE_DIRS}) 
+target_link_libraries(bag ${HDF5_LIBRARIES})
+
+#LibXML2
+find_package( LibXml2 MODULE REQUIRED )
+include_directories (${LIBXML2_INCLUDE_DIRS}) 
+target_link_libraries(bag ${LIBXML2_LIBRARIES})
 
 IF(MSVC)
 
