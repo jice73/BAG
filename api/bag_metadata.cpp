@@ -2,7 +2,7 @@
 #include "bag_private.h"
 #include "bag_metadata_import.h"
 
-#include <h5cpp.h>
+#include <src/h5cpp.h>
 #include <memory>
 
 namespace BAG
@@ -39,7 +39,7 @@ Metadata::Metadata(Dataset &dataset)
     pData->m_pH5Dataset.reset(new H5::DataSet(pFile->openDataSet(METADATA_PATH)));
     m_pData = pData;
 
-    const size_t memorySize = pData->m_pH5Dataset->getInMemDataSize();
+    //const size_t memorySize = pData->m_pH5Dataset->getInMemDataSize();
 
     H5std_string buffer;
 

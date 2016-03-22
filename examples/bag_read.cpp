@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 {
     using namespace BAG;
 
-    Dataset dataset("D:/BathyWork/openns/trunk/examples/sample-data/sample.bag", BAG_OPEN_READONLY);
+    Dataset dataset("D:/caris_work/openns/trunk/examples/sample-data/sample.bag", BAG_OPEN_READONLY);
 
     uint32_t numRows, numCols;
     dataset.getDims(numRows, numCols);

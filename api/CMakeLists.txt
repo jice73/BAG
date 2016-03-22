@@ -1,6 +1,4 @@
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "W:/BathyWork/workTrunk/msvc2013/x64/third-party/cmake/hdf5")
-
 #The debug build will have a 'd' postfix
 SET(CMAKE_DEBUG_POSTFIX  "d")
 
@@ -47,13 +45,24 @@ source_group("Source Files" FILES ${BAG_SOURCE_FILES})
 add_library (bag ${LIB_TYPE} ${BAG_SOURCE_FILES} )
 
 #HDF5
-find_package (HDF5 CONFIG REQUIRED hdf5_cpp )
+FIND_PACKAGE(HDF5 COMPONENTS CXX REQUIRED)
+#find_package (HDF5 CONFIG REQUIRED hdf5_cpp )
 include_directories (${HDF5_INCLUDE_DIRS}) 
-target_link_libraries(bag ${HDF5_LIBRARIES})
+target_link_libraries(bag debug ${HDF5_hdf5_LIBRARY_DEBUG})
+target_link_libraries(bag debug ${HDF5_hdf5_cpp_LIBRARY_DEBUG})
+target_link_libraries(bag optimized ${HDF5_hdf5_LIBRARY_RELEASE})
+target_link_libraries(bag optimized ${HDF5_hdf5_cpp_LIBRARY_RELEASE})
+#target_link_libraries(bag ${HDF5_LIBRARIES})
+#target_link_libraries(bag ${HDF5_CXX_LIBRARIES})
+#message(STATUS, ${HDF5_LIBRARIES})
+#message(STATUS, ${HDF5_C_LIBRARY})
+#message(STATUS, ${HDF5_CXX_LIBRARY})
+#message(STATUS, ${CMAKE_MODULE_PATH})
 
 #LibXML2
 find_package( LibXml2 MODULE REQUIRED )
-include_directories (${LIBXML2_INCLUDE_DIRS}) 
+include_directories (${LIBXML2_INCLUDE_DIR}) 
+#message(STATUS, ${LIBXML2_INCLUDE_DIR})
 target_link_libraries(bag ${LIBXML2_LIBRARIES})
 
 IF(MSVC)

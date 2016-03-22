@@ -5,7 +5,7 @@
 #include "bag_private.h"
 #include "bag_metadata.h"
 
-#include <h5cpp.h>
+#include <src/h5cpp.h>
 #include <memory>
 #include <map>
 

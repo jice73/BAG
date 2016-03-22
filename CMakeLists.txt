@@ -14,6 +14,9 @@ SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG       ${OPENNS_SOURCE_DIR}/bin)
 SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE     ${OPENNS_SOURCE_DIR}/lib)
 SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG       ${OPENNS_SOURCE_DIR}/lib)
 
+# We currently have some custom Find*.cmake files, so make sure cmake knows where they are.
+LIST(APPEND CMAKE_MODULE_PATH "${OPENNS_SOURCE_DIR}/cmake")
+
 #-----------------------------------------------------------------------------
 # parse the full version number from bag.h and include in OPENNS_VERS_INFO
 #-----------------------------------------------------------------------------
