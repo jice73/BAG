@@ -5,6 +5,8 @@
 #include "bag_dataset.h"
 #include "bag_types.h"
 
+#include <memory>
+
 namespace BAG
 {
 
@@ -20,7 +22,7 @@ public:
     bagTrackingItem operator[] (const int32_t index) const;
     
 protected:
-    Dataset &m_dataset;
+    std::shared_ptr<Dataset> m_pBagDataset;
 };
 
 }   //BAG

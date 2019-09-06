@@ -4,7 +4,7 @@ PROJECT (OPENNS_EXAMPLES)
 #-----------------------------------------------------------------------------
 # Setup include Directories
 #-----------------------------------------------------------------------------
-include_directories(${OPENNS_SOURCE_DIR}/api ${HDF5_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIRS})
+include_directories(${OPENNS_SOURCE_DIR}/api)
 
 IF(MSVC)
 
@@ -42,7 +42,7 @@ FOREACH (example ${examples})
     SET_TARGET_PROPERTIES (${example} PROPERTIES FOLDER examples)
     
     #Link with the bag library.
-    TARGET_LINK_LIBRARIES(${example} bag ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${example} bag)
     
     #Add the '_debug' postfix to the samples.
     SET_TARGET_PROPERTIES( ${example}

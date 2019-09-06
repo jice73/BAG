@@ -5,6 +5,13 @@
 #include "bag_types.h"
 #include "bag_dataset.h"
 
+#include <memory>
+
+namespace H5
+{
+    class DataSet;
+}
+
 namespace BAG
 {
 
@@ -12,8 +19,7 @@ class BAG_API Layer
 {
 public:
 
-    Layer(Dataset &dataset, LayerType type);
-    virtual ~Layer();
+    virtual ~Layer() = default;
 
     const char* getName() const;
     DataType getDataType() const;
@@ -31,11 +37,15 @@ public:
 
 protected:
     
+    Layer(Dataset &dataset, LayerType type);
     Layer(Dataset &dataset, LayerType type, const char* internalPath);
 
 private:
     
-    Data *m_pData = nullptr;
+    int32_t m_internalTypeId;
+    LayerType m_type;
+    std::shared_ptr<Dataset> m_pBagDataset;
+    std::unique_ptr<H5::DataSet> m_pH5Dataset;
 
     friend class Dataset;
 };

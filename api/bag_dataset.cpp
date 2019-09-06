@@ -5,47 +5,28 @@
 #include "bag_private.h"
 #include "bag_metadata.h"
 
-#include <src/h5cpp.h>
-#include <memory>
+#include <h5cpp.h>
 #include <map>
 
 namespace BAG
 {
 
-namespace
+void Dataset::openDataset(const std::string &fileName, BAG_OPEN_MODE openMode)
 {
-
-struct DatasetData : public Data
-{
-    std::string m_version;
-    std::unique_ptr<H5::H5File> m_pFile;
-    std::map<LayerType, std::unique_ptr<Layer> > m_layerMap;
-    std::unique_ptr<TrackingList> m_pTrackingList;
-    std::unique_ptr<Metadata> m_pMetadata;
-};
-
-}   //namespace
-    
-
-Dataset::Dataset(const std::string &fileName, BAG_OPEN_MODE openMode)
-{
-    DatasetData *pData = new DatasetData();
-    pData->m_pFile.reset(new H5::H5File(fileName.c_str(),
+    m_pFile.reset(new H5::H5File(fileName.c_str(),
         (openMode == BAG_OPEN_READONLY) ? H5F_ACC_RDONLY : H5F_ACC_RDWR));
 
-    this->m_pData = pData;
-
-    std::unique_ptr<H5::Group> pBagGroup(new H5::Group(pData->m_pFile->openGroup(ROOT_PATH)));
+    std::unique_ptr<H5::Group> pBagGroup(new H5::Group(m_pFile->openGroup(ROOT_PATH)));
 
     //Read the version.
     H5::Attribute verstionAtt = pBagGroup->openAttribute(BAG_VERSION_NAME);
-    verstionAtt.read(H5T_C_S1, pData->m_version);
+    verstionAtt.read(H5T_C_S1, m_version);
 
     //Create all of our layers.
     for (int i = Elevation; i < Nominal_Elevation; ++i)
     {
         const char* internalPath = Layer::getInternalPath(static_cast<LayerType>(i));
-        if (internalPath == NULL)
+        if (internalPath == nullptr)
             continue;
 
         hid_t id = H5Dopen2( pBagGroup->getLocId(), internalPath, H5P_DEFAULT );
@@ -53,7 +34,7 @@ Dataset::Dataset(const std::string &fileName, BAG_OPEN_MODE openMode)
         {
             H5Dclose(id);
         
-            pData->m_layerMap.insert(std::make_pair(static_cast<LayerType>(i),
+            m_layerMap.insert(std::make_pair(static_cast<LayerType>(i),
                 std::unique_ptr<Layer>(new Layer(*this, static_cast<LayerType>(i)))));
         }
     }
@@ -65,10 +46,10 @@ Dataset::Dataset(const std::string &fileName, BAG_OPEN_MODE openMode)
         {
             H5Dclose(id);
 
-            pData->m_layerMap.insert(std::make_pair(Hypothesis_Strength,
+            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
                 std::unique_ptr<Layer>(new InterleavedLayer(*this, Hypothesis_Strength, NODE))));
 
-            pData->m_layerMap.insert(std::make_pair(Hypothesis_Strength,
+            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
                 std::unique_ptr<Layer>(new InterleavedLayer(*this, Num_Hypotheses, NODE))));
         }
 
@@ -77,45 +58,49 @@ Dataset::Dataset(const std::string &fileName, BAG_OPEN_MODE openMode)
         {
             H5Dclose(id);
 
-            pData->m_layerMap.insert(std::make_pair(Hypothesis_Strength,
+            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
                 std::unique_ptr<Layer>(new InterleavedLayer(*this, Shoal_Elevation, ELEVATION))));
 
-            pData->m_layerMap.insert(std::make_pair(Hypothesis_Strength,
+            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
                 std::unique_ptr<Layer>(new InterleavedLayer(*this, Std_Dev, ELEVATION))));
 
-            pData->m_layerMap.insert(std::make_pair(Hypothesis_Strength,
+            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
                 std::unique_ptr<Layer>(new InterleavedLayer(*this, Num_Soundings, ELEVATION))));
         }
     }
 
     //Create the correct metadata depending on the version.
-    pData->m_pMetadata.reset(new Metadata(*this));
+    m_pMetadata.reset(new Metadata(*this));
 
     //Create the tracking list.
-    pData->m_pTrackingList.reset(new TrackingList(*this));
+    m_pTrackingList.reset(new TrackingList(*this));
 }
 
-Dataset::Dataset(const std::string &fileName, const Metadata &metadata)
+void Dataset::createDataset(const std::string &fileName, const Metadata &metadata)
 {
-    DatasetData *pData = new DatasetData();
-    pData->m_pFile.reset(new H5::H5File(fileName.c_str(), H5F_ACC_RDWR));
-    this->m_pData = pData;
+    m_pFile.reset(new H5::H5File(fileName.c_str(), H5F_ACC_RDWR));
 
     //TODO - implement
 }
 
-Dataset::~Dataset()
+std::shared_ptr<Dataset> Dataset::create(const std::string &fileName, OpenMode openMode)
 {
-    if (this->m_pData != NULL)
-        delete this->m_pData;
+    std::shared_ptr<Dataset> pRet(new Dataset());
+    pRet->openDataset(fileName, openMode);
+    return pRet;
+}
+
+std::shared_ptr<Dataset> Dataset::create(const std::string &fileName, const Metadata &metadata)
+{
+    std::shared_ptr<Dataset> pRet(new Dataset());
+    pRet->createDataset(fileName, metadata);
+    return pRet;
 }
 
 void Dataset::getDims(uint32_t &numRows, uint32_t &numCols) const
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
     //Get the elevation HD5 dataset.
-    H5::DataSet elevationDataset = H5::DataSet(pData->m_pFile->openDataSet(Layer::getInternalPath(Elevation)));
+    H5::DataSet elevationDataset = H5::DataSet(m_pFile->openDataSet(Layer::getInternalPath(Elevation)));
 
     const H5::DataSpace space = elevationDataset.getSpace();
     if (!space.isSimple())
@@ -125,7 +110,7 @@ void Dataset::getDims(uint32_t &numRows, uint32_t &numCols) const
 
     hsize_t size[RANK];
     const int nDimsRank = space.getSimpleExtentNdims();
-    const int dimsRank = space.getSimpleExtentDims(size, NULL);
+    const int dimsRank = space.getSimpleExtentDims(size, nullptr);
 
     if (nDimsRank != RANK || dimsRank != RANK)
     {
@@ -138,10 +123,8 @@ void Dataset::getDims(uint32_t &numRows, uint32_t &numCols) const
 
 uint32_t Dataset::getCompressionLevel() const
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
     //Get the elevation HD5 dataset.
-    H5::DataSet elevationDataset = H5::DataSet(pData->m_pFile->openDataSet(Layer::getInternalPath(Elevation)));
+    H5::DataSet elevationDataset = H5::DataSet(m_pFile->openDataSet(Layer::getInternalPath(Elevation)));
 
     const H5::DSetCreatPropList createPList = elevationDataset.getCreatePlist();
 
@@ -166,10 +149,8 @@ uint32_t Dataset::getCompressionLevel() const
 
 uint32_t Dataset::getChunkSize() const
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
     //Get the elevation HD5 dataset.
-    H5::DataSet elevationDataset = H5::DataSet(pData->m_pFile->openDataSet(Layer::getInternalPath(Elevation)));
+    H5::DataSet elevationDataset = H5::DataSet(m_pFile->openDataSet(Layer::getInternalPath(Elevation)));
 
     const H5::DSetCreatPropList createPList = elevationDataset.getCreatePlist();
 
@@ -187,26 +168,18 @@ uint32_t Dataset::getChunkSize() const
 
 std::vector<LayerType> Dataset::getLayerTypes() const
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
     std::vector<LayerType> typeList;
 
-    for (auto iter = pData->m_layerMap.begin();
-        iter != pData->m_layerMap.end();
-        iter++)
-    {
-        typeList.push_back((*iter).first);
-    }
+    for (auto&& layer : m_layerMap)
+        typeList.push_back(layer.first);
 
     return typeList;
 }
    
 Layer& Dataset::getLayer(LayerType type)
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
-    auto iter = pData->m_layerMap.find(type);
-    if (iter == pData->m_layerMap.end())
+    auto iter = m_layerMap.find(type);
+    if (iter == m_layerMap.end())
     {
         //throw
     }
@@ -216,10 +189,8 @@ Layer& Dataset::getLayer(LayerType type)
 
 const Layer& Dataset::getLayer(LayerType type) const
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
-    auto iter = pData->m_layerMap.find(type);
-    if (iter == pData->m_layerMap.end())
+    auto iter = m_layerMap.find(type);
+    if (iter == m_layerMap.end())
     {
         //throw
     }
@@ -229,41 +200,51 @@ const Layer& Dataset::getLayer(LayerType type) const
 
 Layer& Dataset::addLayer(LayerType type)
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
     //Make sure it doesn't already exist.
-    auto iter = pData->m_layerMap.find(type);
-    if (iter != pData->m_layerMap.end())
+    auto iter = m_layerMap.find(type);
+    if (iter != m_layerMap.end())
     {
         //throw
     }
 
     //Create the new layer...
 
-    pData->m_layerMap.insert(std::make_pair(type,
+    m_layerMap.insert(std::make_pair(type,
         std::unique_ptr<Layer>(new Layer(*this, type))));
 
-    return *pData->m_layerMap[type];
+    return *m_layerMap[type];
 }
 
 void Dataset::gridToGeo(uint32_t row, uint32_t column, double &x, double &y) const
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-
-    x = pData->m_pMetadata->getStruct().spatialRepresentationInfo->llCornerX +
-        (row * pData->m_pMetadata->getStruct().spatialRepresentationInfo->rowResolution);
-    y = pData->m_pMetadata->getStruct().spatialRepresentationInfo->llCornerY +
-        (column * pData->m_pMetadata->getStruct().spatialRepresentationInfo->columnResolution);
+    x = m_pMetadata->getStruct().spatialRepresentationInfo->llCornerX +
+        (row * m_pMetadata->getStruct().spatialRepresentationInfo->rowResolution);
+    y = m_pMetadata->getStruct().spatialRepresentationInfo->llCornerY +
+        (column * m_pMetadata->getStruct().spatialRepresentationInfo->columnResolution);
 }
 
 void Dataset::geoToGrid(double x, double y, uint32_t &row, uint32_t &column) const
 {
 }
 
-void* Dataset::getFile()
+H5::H5File& Dataset::getFile()
 {
-    DatasetData *pData = dynamic_cast<DatasetData *>(this->m_pData);
-    return pData->m_pFile.get();
+    return *m_pFile;
+}
+
+TrackingList& Dataset::getTrackingList()
+{
+    return *m_pTrackingList;
+}
+
+const TrackingList& Dataset::getTrackingList() const
+{
+    return *m_pTrackingList;
+}
+
+const Metadata& Dataset::getMetadata() const
+{
+    return *m_pMetadata;
 }
 
 }   //namespace BAG

@@ -1,5 +1,9 @@
 #include "bag_interleavedlayer.h"
 #include "bag_private.h"
+#include "bag_metadata.h"
+#include "bag_trackinglist.h"
+
+#include <h5cpp.h>
 
 namespace BAG
 {

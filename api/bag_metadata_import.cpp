@@ -138,21 +138,21 @@ std::vector<const xmlNode*> findNodes(const xmlNode &relativeNode, const char *s
 
     //Get the root node of the document.
     const xmlNode *pRoot = xmlDocGetRootElement(relativeNode.doc);
-    if (pRoot == NULL)
+    if (pRoot == nullptr)
         return std::vector<const xmlNode*>();
 
     //If the xPath context has not been initialized yet, do it now.
     xmlXPathContext *pContext = xmlXPathNewContext(relativeNode.doc);
-    if (pContext == NULL)
+    if (pContext == nullptr)
         return std::vector<const xmlNode*>();
 
     pContext->node = const_cast<xmlNode*>(&relativeNode);
 
     //Register any namespaces with the xPath context.
     const xmlNs *xmlNameSpace = pRoot->nsDef;
-    while (xmlNameSpace != NULL)
+    while (xmlNameSpace != nullptr)
     {
-        if (xmlNameSpace->prefix != NULL)
+        if (xmlNameSpace->prefix != nullptr)
         {
             const int ret = xmlXPathRegisterNs(pContext, xmlNameSpace->prefix, xmlNameSpace->href);
             if (ret != 0)
@@ -171,7 +171,7 @@ std::vector<const xmlNode*> findNodes(const xmlNode &relativeNode, const char *s
 
     //Evaluate the expression.
     xmlXPathObject *pPathObject = xmlXPathEvalExpression(encodedSearch, pContext);
-    if (pPathObject == NULL)
+    if (pPathObject == nullptr)
     {
         //Error
          xmlXPathFreeContext(pContext);
@@ -179,7 +179,7 @@ std::vector<const xmlNode*> findNodes(const xmlNode &relativeNode, const char *s
     }
 
     //Add each value that was returned.
-    if (pPathObject->nodesetval != NULL)
+    if (pPathObject->nodesetval != nullptr)
     {
         for (int i = 0; i < pPathObject->nodesetval->nodeNr; i++)
             retList.push_back(pPathObject->nodesetval->nodeTab[i]);
@@ -207,7 +207,7 @@ const xmlNode* findNode(const xmlNode &relativeNode, const char *searchString)
 {
     std::vector<const xmlNode*> retList = findNodes(relativeNode, searchString);
     if (retList.empty())
-        return NULL;
+        return nullptr;
 
     return retList.front();
 }
@@ -227,7 +227,7 @@ std::string getProperty(const xmlNode &current, const char *propertyName)
 {
      // Retrieve the property.
     xmlChar * temp = xmlGetProp(const_cast<xmlNode *>(&current), EncodedString(*current.doc, propertyName));
-    if(temp == NULL)
+    if(temp == nullptr)
         return std::string();
 
     const std::string value((const char *)temp);
@@ -255,9 +255,9 @@ std::string getContents(const xmlNode &current)
     const xmlNode * text = current.children;
 
     // Concatenate all the text elements.
-    while(text != NULL)
+    while(text != nullptr)
     {
-        if (text->type == XML_TEXT_NODE && text->content != NULL)
+        if (text->type == XML_TEXT_NODE && text->content != nullptr)
             contents += (const char *)text->content;
 
         text = text->next;
@@ -285,8 +285,8 @@ std::string getContents(const xmlNode &current)
 char* getPropertyAsString(const xmlNode &node, const char *searchPath, const char * propertyName)
 {
     const xmlNode *pNode = findNode(node, searchPath);
-    if (pNode == NULL)
-        return NULL;
+    if (pNode == nullptr)
+        return nullptr;
 
     const std::string &value = getProperty(*pNode, propertyName);
     return (char*)_strdup(value.c_str());
@@ -308,8 +308,8 @@ char* getPropertyAsString(const xmlNode &node, const char *searchPath, const cha
 char* getContentsAsString(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
-    if (pNode == NULL)
-        return NULL;
+    if (pNode == nullptr)
+        return nullptr;
 
     const std::string &value = getContents(*pNode);
     return (char*)_strdup(value.c_str());
@@ -331,7 +331,7 @@ char* getContentsAsString(const xmlNode &node, const char *searchPath)
 int32_t getContentsAsInt(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
-    if (pNode == NULL)
+    if (pNode == nullptr)
         return 0;
 
     const std::string &value = getContents(*pNode);
@@ -354,7 +354,7 @@ int32_t getContentsAsInt(const xmlNode &node, const char *searchPath)
 double getContentsAsFloat(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
-    if (pNode == NULL)
+    if (pNode == nullptr)
         return 0.0;
 
     const std::string &value = getContents(*pNode);
@@ -377,7 +377,7 @@ double getContentsAsFloat(const xmlNode &node, const char *searchPath)
 bool getContentsAsBool(const xmlNode &node, const char *searchPath)
 {
     const xmlNode *pNode = findNode(node, searchPath);
-    if (pNode == NULL)
+    if (pNode == nullptr)
         return false;
 
     const std::string &value = getContents(*pNode);
@@ -802,7 +802,7 @@ bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTA
         //smXML:MD_Georectified/cornerPoints/gml:Point
         {
             const xmlNode *pNode = findNode(node, "smXML:MD_Georectified/cornerPoints/gml:Point/gml:coordinates");
-            if (pNode == NULL)
+            if (pNode == nullptr)
                 return false;
 
             //Get the encoded corner values.
@@ -849,7 +849,7 @@ bool decodeSpatialRepresentationInfo(const xmlNode &node, BAG_SPATIAL_REPRESENTA
         //gmd:MD_Georectified/gmd:cornerPoints/gml:Point
         {
             const xmlNode *pNode = findNode(node, "gmd:MD_Georectified/gmd:cornerPoints/gml:Point/gml:coordinates");
-            if (pNode == NULL)
+            if (pNode == nullptr)
                 return false;
 
             //Get the encoded corner values.
@@ -1081,7 +1081,7 @@ bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * refer
     {
         //If I have an ellipsoid, then this must be horizontal.
         char *ellipsoid = getContentsAsString(node, "smXML:MD_CRS/ellipsoid/smXML:RS_Identifier/code");
-        if (ellipsoid != NULL)
+        if (ellipsoid != nullptr)
         {
             char *projectionId = getContentsAsString(node, "smXML:MD_CRS/projection/smXML:RS_Identifier/code");
             char *datumId = getContentsAsString(node, "smXML:MD_CRS/datum/smXML:RS_Identifier/code");
@@ -1126,7 +1126,7 @@ bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * refer
     	        v1Def.geoParameters.scale_factor = scaleAtProjOrigin;
 
             char buffer[2048];
-            bagError error = bagLegacyToWkt(v1Def, buffer, 2048, NULL, 0);
+            bagError error = bagLegacyToWkt(v1Def, buffer, 2048, nullptr, 0);
             if (error)
                 return false;
 
@@ -1143,7 +1143,7 @@ bool decodeReferenceSystemInfo(const xmlNode &node, BAG_REFERENCE_SYSTEM * refer
             free(datum);
 
             char buffer[1024];
-            bagError error = bagLegacyToWkt(system, NULL, 0, buffer, 1024);
+            bagError error = bagLegacyToWkt(system, nullptr, 0, buffer, 1024);
             if (error)
                 return false;
 
@@ -1193,12 +1193,12 @@ bagError validateSchema(xmlDoc &metadataDocument)
 
     // Open the schema.
     xmlDoc *pSchemaDoc = xmlParseFile(schemaFile.c_str()); 
-    if (pSchemaDoc == NULL)
+    if (pSchemaDoc == nullptr)
         return BAG_METADTA_PARSE_FAILED;
 
     // Parse the schema.
     xmlSchemaParserCtxt *pContext = xmlSchemaNewDocParserCtxt(pSchemaDoc);
-    if (pContext == NULL)
+    if (pContext == nullptr)
     {
         xmlFreeDoc(pSchemaDoc);
         return BAG_METADTA_SCHEMA_SETUP_FAILED;
@@ -1206,7 +1206,7 @@ bagError validateSchema(xmlDoc &metadataDocument)
 
     // Initialize the schema object.
     xmlSchema *pSchema = xmlSchemaParse(pContext);
-    if (pSchema == NULL)
+    if (pSchema == nullptr)
     {
         xmlSchemaFreeParserCtxt(pContext);
         xmlFreeDoc(pSchemaDoc);
@@ -1215,7 +1215,7 @@ bagError validateSchema(xmlDoc &metadataDocument)
 
     // Create the validation object.
     xmlSchemaValidCtxt *pValidationContext = xmlSchemaNewValidCtxt(pSchema);
-    if (pValidationContext == NULL)
+    if (pValidationContext == nullptr)
     {
         xmlSchemaFree(pSchema);
         xmlSchemaFreeParserCtxt(pContext);
@@ -1254,7 +1254,7 @@ bagError validateSchema(xmlDoc &metadataDocument)
 bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
 {
     xmlNode *pRoot = xmlDocGetRootElement(&document);
-    if (pRoot == NULL)
+    if (pRoot == nullptr)
         return BAG_METADTA_NOT_INITIALIZED;
 
     //gmd:language
@@ -1269,7 +1269,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:contact
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/contact");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1290,7 +1290,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:spatialRepresentationInfo
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/spatialRepresentationInfo");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1302,7 +1302,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:referenceSystemInfo (horizontal)
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/referenceSystemInfo[1]");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1320,15 +1320,15 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:referenceSystemInfo (vertical)
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/referenceSystemInfo[2]");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             //If we could not find the vertical coordiante system node, then lets look in the other location.
             const xmlNode *pNode2 = findNode(*pRoot, "/smXML:MD_Metadata/referenceSystemInfo[1]//verticalDatum");
-            if (pNode2 == NULL)
+            if (pNode2 == nullptr)
                 return BAG_METADTA_MISSING_MANDATORY_ITEM;
 
             char *datum = getContentsAsString(*pNode2, "smXML:RS_Identifier/code");
-            if (datum == NULL)
+            if (datum == nullptr)
                 return BAG_METADTA_MISSING_MANDATORY_ITEM;
             
             bagLegacyReferenceSystem system;
@@ -1336,7 +1336,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
             free(datum);
 
             char buffer[1024];
-            bagError error = bagLegacyToWkt(system, NULL, 0, buffer, 1024);
+            bagError error = bagLegacyToWkt(system, nullptr, 0, buffer, 1024);
             if (error)
                 return error;
 
@@ -1369,7 +1369,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:identificationInfo
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/identificationInfo");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1381,7 +1381,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:dataQualityInfo
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/dataQualityInfo");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1393,7 +1393,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:metadataConstraints (legal)
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/metadataConstraints/smXML:MD_LegalConstraints/parent::*");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1405,7 +1405,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:metadataConstraints (security)
     {
         const xmlNode *pNode = findNode(*pRoot, "/smXML:MD_Metadata/metadataConstraints/smXML:MD_SecurityConstraints/parent::*");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1436,7 +1436,7 @@ bagError bagImportMetadataFromXmlV1(xmlDoc &document, BAG_METADATA * metadata)
 bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
 {
     xmlNode *pRoot = xmlDocGetRootElement(&document);
-    if (pRoot == NULL)
+    if (pRoot == nullptr)
         return BAG_METADTA_NOT_INITIALIZED;
 
     //gmd:fileIdentifier
@@ -1454,7 +1454,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:contact
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:contact");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1475,7 +1475,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:spatialRepresentationInfo
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:spatialRepresentationInfo/gmd:MD_Georectified/parent::*");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1487,7 +1487,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:referenceSystemInfo (horizontal)
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:referenceSystemInfo[1]");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1499,7 +1499,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:referenceSystemInfo (vertical)
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:referenceSystemInfo[2]");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1511,7 +1511,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:identificationInfo
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:identificationInfo");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1523,7 +1523,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:dataQualityInfo
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:dataQualityInfo");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1535,7 +1535,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:metadataConstraints (legal)
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:metadataConstraints/gmd:MD_LegalConstraints/parent::*");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1547,7 +1547,7 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
     //gmd:metadataConstraints (security)
     {
         const xmlNode *pNode = findNode(*pRoot, "/gmi:MI_Metadata/gmd:metadataConstraints/gmd:MD_SecurityConstraints/parent::*");
-        if (pNode == NULL)
+        if (pNode == nullptr)
         {
             return BAG_METADTA_MISSING_MANDATORY_ITEM;
         }
@@ -1580,11 +1580,11 @@ bagError bagImportMetadataFromXmlV2(xmlDoc &document, BAG_METADATA * metadata)
 //************************************************************************
 bagError bagImportMetadataFromXml(xmlDoc &document, BAG_METADATA * metadata, bool doValidation)
 {
-    if (metadata == NULL)
+    if (metadata == nullptr)
         return BAG_METADTA_INVALID_HANDLE;
 
     xmlNode *pRoot = xmlDocGetRootElement(&document);
-    if (pRoot == NULL)
+    if (pRoot == nullptr)
         return BAG_METADTA_EMPTY_DOCUMENT;
 
     //Do we want to validate against the xml schema?
@@ -1630,7 +1630,7 @@ bagError bagImportMetadataFromXml(xmlDoc &document, BAG_METADATA * metadata, boo
 bagError bagImportMetadataFromXmlBuffer(const char *xmlBuffer, uint32_t bufferSize, BAG_METADATA * metadata, bool doValidation)
 {
     xmlDoc *pDocument = xmlParseMemory(xmlBuffer, bufferSize);
-    if (pDocument == NULL)
+    if (pDocument == nullptr)
         return BAG_METADTA_NOT_INITIALIZED;
 
     return bagImportMetadataFromXml(*pDocument, metadata, doValidation);
@@ -1658,7 +1658,7 @@ bagError bagImportMetadataFromXmlBuffer(const char *xmlBuffer, uint32_t bufferSi
 bagError bagImportMetadataFromXmlFile(const char *fileName, BAG_METADATA * metadata, bool doValidation)
 {
     xmlDoc *pDocument = xmlParseFile(fileName); 
-    if (pDocument == NULL)
+    if (pDocument == nullptr)
         return BAG_METADTA_NOT_INITIALIZED;
 
     return bagImportMetadataFromXml(*pDocument, metadata, doValidation);

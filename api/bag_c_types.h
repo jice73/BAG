@@ -16,7 +16,8 @@ enum BAG_LAYER_TYPE
 	Std_Dev		= 5,
 	Num_Soundings   	= 6,
 	Average_Elevation = 7,
-	Nominal_Elevation = 8
+	Nominal_Elevation = 8,
+    Compound = 9
 };
 
 /* Definitions for file open access modes */

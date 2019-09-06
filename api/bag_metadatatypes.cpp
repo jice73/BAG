@@ -6,12 +6,16 @@
 #include "bag.h"
 #include "bag_metadata.h"
 #include "bag_errors.h"
+#include "bag_trackinglist.h"
+#include "bag_layer.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <string>
 #include <algorithm>
+
+#include <h5cpp.h>
 
 //This may not work for everyone.
 #ifndef __cplusplus
@@ -32,16 +36,16 @@
 //************************************************************************
 bool initResponsibleParty(BAG_RESPONSIBLE_PARTY * responsibleParty)
 {
-    if (responsibleParty == NULL)
+    if (responsibleParty == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
-    (*responsibleParty).individualName = NULL;
-    (*responsibleParty).organisationName = NULL;
-    (*responsibleParty).positionName = NULL;
-    (*responsibleParty).role = NULL;
+    (*responsibleParty).individualName = nullptr;
+    (*responsibleParty).organisationName = nullptr;
+    (*responsibleParty).positionName = nullptr;
+    (*responsibleParty).role = nullptr;
 
     return true;
 }
@@ -56,7 +60,7 @@ bool initResponsibleParty(BAG_RESPONSIBLE_PARTY * responsibleParty)
 //************************************************************************
 void freeResponsibleParty(BAG_RESPONSIBLE_PARTY * responsibleParty)
 {
-    if (responsibleParty == NULL)
+    if (responsibleParty == nullptr)
         return;
 
     free(responsibleParty->individualName);
@@ -78,33 +82,33 @@ void freeResponsibleParty(BAG_RESPONSIBLE_PARTY * responsibleParty)
 //************************************************************************
 bool initDataIdentificationInfo(BAG_IDENTIFICATION * dataIdentificationInfo)
 {
-    if (dataIdentificationInfo == NULL)
+    if (dataIdentificationInfo == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
-    (*dataIdentificationInfo).title = NULL;
-	(*dataIdentificationInfo).date = NULL;
-	(*dataIdentificationInfo).dateType = NULL; 
-	(*dataIdentificationInfo).abstractString = NULL;
-	(*dataIdentificationInfo).status = NULL;
-	(*dataIdentificationInfo).spatialRepresentationType = NULL;
-	(*dataIdentificationInfo).language = NULL;
-    (*dataIdentificationInfo).character_set = NULL;
-	(*dataIdentificationInfo).topicCategory = NULL;
+    (*dataIdentificationInfo).title = nullptr;
+	(*dataIdentificationInfo).date = nullptr;
+	(*dataIdentificationInfo).dateType = nullptr;
+	(*dataIdentificationInfo).abstractString = nullptr;
+	(*dataIdentificationInfo).status = nullptr;
+	(*dataIdentificationInfo).spatialRepresentationType = nullptr;
+	(*dataIdentificationInfo).language = nullptr;
+    (*dataIdentificationInfo).character_set = nullptr;
+	(*dataIdentificationInfo).topicCategory = nullptr;
 
-    (*dataIdentificationInfo).verticalUncertaintyType = NULL;
-	(*dataIdentificationInfo).depthCorrectionType = NULL;
-	(*dataIdentificationInfo).elevationSolutionGroupType = NULL;
-	(*dataIdentificationInfo).nodeGroupType = NULL;
+    (*dataIdentificationInfo).verticalUncertaintyType = nullptr;
+    (*dataIdentificationInfo).depthCorrectionType = nullptr;
+	(*dataIdentificationInfo).elevationSolutionGroupType = nullptr;
+	(*dataIdentificationInfo).nodeGroupType = nullptr;
 
 	(*dataIdentificationInfo).westBoundingLongitude = INIT_VALUE;
 	(*dataIdentificationInfo).eastBoundingLongitude = INIT_VALUE;   
 	(*dataIdentificationInfo).southBoundingLatitude = INIT_VALUE;       
 	(*dataIdentificationInfo).northBoundingLatitude = INIT_VALUE;
 
-    (*dataIdentificationInfo).responsibleParties = NULL;
+    (*dataIdentificationInfo).responsibleParties = nullptr;
     (*dataIdentificationInfo).numberOfResponsibleParties = 0;
 
     return true;
@@ -120,7 +124,7 @@ bool initDataIdentificationInfo(BAG_IDENTIFICATION * dataIdentificationInfo)
 //************************************************************************
 void freeDataIdentificationInfo(BAG_IDENTIFICATION * dataIdentificationInfo)
 {
-    if (dataIdentificationInfo == NULL)
+    if (dataIdentificationInfo == nullptr)
         return;
 
     free(dataIdentificationInfo->title);
@@ -155,14 +159,14 @@ void freeDataIdentificationInfo(BAG_IDENTIFICATION * dataIdentificationInfo)
 //************************************************************************
 bool initLegalConstraints(BAG_LEGAL_CONSTRAINTS * legalConstraints)
 {
-    if (legalConstraints == NULL)
+    if (legalConstraints == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
-   (*legalConstraints).useConstraints = NULL;
-   (*legalConstraints).otherConstraints = NULL;
+   (*legalConstraints).useConstraints = nullptr;
+   (*legalConstraints).otherConstraints = nullptr;
 
     return true;
 }
@@ -177,7 +181,7 @@ bool initLegalConstraints(BAG_LEGAL_CONSTRAINTS * legalConstraints)
 //************************************************************************
 void freeLegalConstraints(BAG_LEGAL_CONSTRAINTS * legalConstraints)
 {
-    if (legalConstraints == NULL)
+    if (legalConstraints == nullptr)
         return;
     
    free(legalConstraints->useConstraints);
@@ -197,14 +201,14 @@ void freeLegalConstraints(BAG_LEGAL_CONSTRAINTS * legalConstraints)
 //************************************************************************
 bool initSecurityConstraints(BAG_SECURITY_CONSTRAINTS * securityConstraints)
 {
-    if (securityConstraints == NULL)
+    if (securityConstraints == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
     
-    (*securityConstraints).classification = NULL;
-	(*securityConstraints).userNote = NULL;
+    (*securityConstraints).classification = nullptr;
+	(*securityConstraints).userNote = nullptr;
 
     return true;
 }
@@ -219,7 +223,7 @@ bool initSecurityConstraints(BAG_SECURITY_CONSTRAINTS * securityConstraints)
 //************************************************************************
 void freeSecurityConstraints(BAG_SECURITY_CONSTRAINTS * securityConstraints)
 {
-    if (securityConstraints == NULL)
+    if (securityConstraints == nullptr)
         return;
     
     free(securityConstraints->classification);
@@ -239,19 +243,19 @@ void freeSecurityConstraints(BAG_SECURITY_CONSTRAINTS * securityConstraints)
 //************************************************************************
 bool initSourceInfo(BAG_SOURCE * sourceInfo)
 {
-    if (sourceInfo == NULL)
+    if (sourceInfo == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
-    (*sourceInfo).description = NULL;
-    (*sourceInfo).title = NULL;
-    (*sourceInfo).date = NULL;
-    (*sourceInfo).dateType = NULL;
+    (*sourceInfo).description = nullptr;
+    (*sourceInfo).title = nullptr;
+    (*sourceInfo).date = nullptr;
+    (*sourceInfo).dateType = nullptr;
 
-    (*sourceInfo).responsibleParties = NULL;
-    (*sourceInfo).numberOfResponsibleParties = NULL;
+    (*sourceInfo).responsibleParties = nullptr;
+    (*sourceInfo).numberOfResponsibleParties = 0;
 
     return true;
 }
@@ -266,7 +270,7 @@ bool initSourceInfo(BAG_SOURCE * sourceInfo)
 //************************************************************************
 void freeSourceInfo(BAG_SOURCE * sourceInfo)
 {
-    if (sourceInfo == NULL)
+    if (sourceInfo == nullptr)
         return;
 
     free(sourceInfo->description);
@@ -291,20 +295,20 @@ void freeSourceInfo(BAG_SOURCE * sourceInfo)
 //************************************************************************
 bool initProcessStep(BAG_PROCESS_STEP * processStep)
 {
-    if (processStep == NULL)
+    if (processStep == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
-    (*processStep).description = NULL;
-    (*processStep).dateTime = NULL;
-    (*processStep).trackingId = NULL;
+    (*processStep).description = nullptr;
+    (*processStep).dateTime = nullptr;
+    (*processStep).trackingId = nullptr;
 
-    (*processStep).lineageSources = NULL;
+    (*processStep).lineageSources = nullptr;
     (*processStep).numberOfSources = 0;
 
-    (*processStep).processors = NULL;
+    (*processStep).processors = nullptr;
     (*processStep).numberOfProcessors = 0;
 
     return true;
@@ -320,7 +324,7 @@ bool initProcessStep(BAG_PROCESS_STEP * processStep)
 //************************************************************************
 void freeProcessStep(BAG_PROCESS_STEP * processStep)
 {
-    if (processStep == NULL)
+    if (processStep == nullptr)
         return;
 
     free(processStep->description);
@@ -347,14 +351,14 @@ void freeProcessStep(BAG_PROCESS_STEP * processStep)
 //************************************************************************
 bool initDataQualityInfo(BAG_DATA_QUALITY * dataQualityInfo)
 {
-    if (dataQualityInfo == NULL)
+    if (dataQualityInfo == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
     (*dataQualityInfo).scope = _strdup("dataset");
-    (*dataQualityInfo).lineageProcessSteps = NULL;
+    (*dataQualityInfo).lineageProcessSteps = nullptr;
     (*dataQualityInfo).numberOfProcessSteps = 0;
 
     return true;
@@ -370,7 +374,7 @@ bool initDataQualityInfo(BAG_DATA_QUALITY * dataQualityInfo)
 //************************************************************************
 void freeDataQualityInfo(BAG_DATA_QUALITY * dataQualityInfo)
 {
-    if (dataQualityInfo == NULL)
+    if (dataQualityInfo == nullptr)
         return;
 
     free(dataQualityInfo->scope);
@@ -392,7 +396,7 @@ void freeDataQualityInfo(BAG_DATA_QUALITY * dataQualityInfo)
 //************************************************************************
 bool initSpatialRepresentationInfo(BAG_SPATIAL_REPRESENTATION * spatialRepresentationInfo)
 {
-    if (spatialRepresentationInfo == NULL)
+    if (spatialRepresentationInfo == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
@@ -402,7 +406,7 @@ bool initSpatialRepresentationInfo(BAG_SPATIAL_REPRESENTATION * spatialRepresent
     (*spatialRepresentationInfo).rowResolution = 0.0;
     (*spatialRepresentationInfo).numberOfColumns = 0;
     (*spatialRepresentationInfo).columnResolution = 0.0;
-    (*spatialRepresentationInfo).resolutionUnit = NULL;
+    (*spatialRepresentationInfo).resolutionUnit = nullptr;
 
     (*spatialRepresentationInfo).cellGeometry = _strdup("point");
     (*spatialRepresentationInfo).transformationParameterAvailability = false;
@@ -413,8 +417,8 @@ bool initSpatialRepresentationInfo(BAG_SPATIAL_REPRESENTATION * spatialRepresent
     (*spatialRepresentationInfo).urCornerX = INIT_VALUE;                               
     (*spatialRepresentationInfo).urCornerY = INIT_VALUE;  
 
-    (*spatialRepresentationInfo).transformationDimensionDescription = NULL;
-    (*spatialRepresentationInfo).transformationDimensionMapping = NULL;
+    (*spatialRepresentationInfo).transformationDimensionDescription = nullptr;
+    (*spatialRepresentationInfo).transformationDimensionMapping = nullptr;
 
     return true;
 }
@@ -429,7 +433,7 @@ bool initSpatialRepresentationInfo(BAG_SPATIAL_REPRESENTATION * spatialRepresent
 //************************************************************************
 void freeSpatialRepresentationInfo(BAG_SPATIAL_REPRESENTATION * spatialRepresentationInfo)
 {
-    if (spatialRepresentationInfo == NULL)
+    if (spatialRepresentationInfo == nullptr)
         return;
 
     free(spatialRepresentationInfo->resolutionUnit);
@@ -457,14 +461,14 @@ void freeSpatialRepresentationInfo(BAG_SPATIAL_REPRESENTATION * spatialRepresent
 //************************************************************************
 bool initReferenceSystemInfo(BAG_REFERENCE_SYSTEM *referenceInfo)
 {
-    if (referenceInfo == NULL)
+    if (referenceInfo == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return false;
     }
 
-    referenceInfo->definition = NULL;
-    referenceInfo->type = NULL;
+    referenceInfo->definition = nullptr;
+    referenceInfo->type = nullptr;
 
     return true;
 }
@@ -479,7 +483,7 @@ bool initReferenceSystemInfo(BAG_REFERENCE_SYSTEM *referenceInfo)
 //************************************************************************
 void freeReferenceSystemInfo(BAG_REFERENCE_SYSTEM *referenceInfo)
 {
-    if (referenceInfo == NULL)
+    if (referenceInfo == nullptr)
         return;
 
     free(referenceInfo->definition);
@@ -501,14 +505,14 @@ void freeReferenceSystemInfo(BAG_REFERENCE_SYSTEM *referenceInfo)
 //************************************************************************
 bagError bagInitMetadata(BAG_METADATA * metadata)
 {
-    if (metadata == NULL)
+    if (metadata == nullptr)
     {
         fprintf(stderr,"ERROR: Exception when attempting to intialize data structure. Exception message is: Null pointer\n");
         return BAG_METADTA_INVALID_HANDLE;
     }
 
-    metadata->fileIdentifier = NULL;
-    metadata->dateStamp = NULL;
+    metadata->fileIdentifier = nullptr;
+    metadata->dateStamp = nullptr;
     metadata->language = _strdup("en");
     metadata->characterSet = _strdup("utf8");
     metadata->hierarchyLevel = _strdup("dataset");
@@ -516,49 +520,49 @@ bagError bagInitMetadata(BAG_METADATA * metadata)
     metadata->metadataStandardVersion = _strdup("2003/Cor.1:2006");
 
     metadata->contact = (BAG_RESPONSIBLE_PARTY *)malloc(sizeof(BAG_RESPONSIBLE_PARTY));
-    if (metadata->contact == NULL)
+    if (metadata->contact == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initResponsibleParty(metadata->contact))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->spatialRepresentationInfo = (BAG_SPATIAL_REPRESENTATION *)malloc(sizeof(BAG_SPATIAL_REPRESENTATION));
-    if (metadata->spatialRepresentationInfo == NULL)
+    if (metadata->spatialRepresentationInfo == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initSpatialRepresentationInfo(metadata->spatialRepresentationInfo))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->horizontalReferenceSystem = (BAG_REFERENCE_SYSTEM *)malloc(sizeof(BAG_REFERENCE_SYSTEM));
-    if (metadata->horizontalReferenceSystem == NULL)
+    if (metadata->horizontalReferenceSystem == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initReferenceSystemInfo(metadata->horizontalReferenceSystem))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->verticalReferenceSystem = (BAG_REFERENCE_SYSTEM *)malloc(sizeof(BAG_REFERENCE_SYSTEM));
-    if (metadata->verticalReferenceSystem == NULL)
+    if (metadata->verticalReferenceSystem == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initReferenceSystemInfo(metadata->verticalReferenceSystem))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->identificationInfo = (BAG_IDENTIFICATION *)malloc(sizeof(BAG_IDENTIFICATION));
-    if (metadata->identificationInfo == NULL)
+    if (metadata->identificationInfo == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initDataIdentificationInfo(metadata->identificationInfo))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->dataQualityInfo = (BAG_DATA_QUALITY *)malloc(sizeof(BAG_DATA_QUALITY));
-    if (metadata->dataQualityInfo == NULL)
+    if (metadata->dataQualityInfo == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initDataQualityInfo(metadata->dataQualityInfo))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->legalConstraints = (BAG_LEGAL_CONSTRAINTS *)malloc(sizeof(BAG_LEGAL_CONSTRAINTS));
-    if (metadata->legalConstraints == NULL)
+    if (metadata->legalConstraints == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initLegalConstraints(metadata->legalConstraints))
         return BAG_MEMORY_ALLOCATION_FAILED;
 
     metadata->securityConstraints = (BAG_SECURITY_CONSTRAINTS *)malloc(sizeof(BAG_SECURITY_CONSTRAINTS));
-    if (metadata->securityConstraints == NULL)
+    if (metadata->securityConstraints == nullptr)
         return BAG_MEMORY_ALLOCATION_FAILED;
     if (!initSecurityConstraints(metadata->securityConstraints))
         return BAG_MEMORY_ALLOCATION_FAILED;
@@ -576,7 +580,7 @@ bagError bagInitMetadata(BAG_METADATA * metadata)
 //************************************************************************
 void bagFreeMetadata(BAG_METADATA * metadata)
 {
-    if (metadata == NULL)
+    if (metadata == nullptr)
         return;
 
     free(metadata->fileIdentifier);

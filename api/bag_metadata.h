@@ -5,6 +5,13 @@
 #include "bag_dataset.h"
 #include "bag_metadatatypes.h"
 
+#include <memory>
+
+namespace H5
+{
+    class DataSet;
+}
+
 namespace BAG
 {
 
@@ -22,8 +29,10 @@ public:
     void loadFromBuffer(const std::string &xmlBuffer);
 
 private:
-    
-    Data *m_pData = nullptr;
+
+    std::shared_ptr<Dataset> m_pBagDataset;
+    BAG_METADATA m_metaStruct;
+    std::unique_ptr<H5::DataSet> m_pH5Dataset;
 };
 
 }   //namespace BAG

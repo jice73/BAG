@@ -8,19 +8,19 @@ project (OPENNS)
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
 SET (OPENNS_SRC_DIR                             ${OPENNS_SOURCE_DIR}/api)
-SET (OPENNS_EXAMPLES_SOURCE_DIR                 ${OPENNS_SOURCE_DIR}/examples)
+#SET (OPENNS_EXAMPLES_SOURCE_DIR                 ${OPENNS_SOURCE_DIR}/examples)
 SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE     ${OPENNS_SOURCE_DIR}/bin)
 SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG       ${OPENNS_SOURCE_DIR}/bin)
 SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE     ${OPENNS_SOURCE_DIR}/lib)
 SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG       ${OPENNS_SOURCE_DIR}/lib)
 
 # We currently have some custom Find*.cmake files, so make sure cmake knows where they are.
-LIST(APPEND CMAKE_MODULE_PATH "${OPENNS_SOURCE_DIR}/cmake")
+#LIST(APPEND CMAKE_MODULE_PATH "${OPENNS_SOURCE_DIR}/cmake")
 
 #-----------------------------------------------------------------------------
 # parse the full version number from bag.h and include in OPENNS_VERS_INFO
 #-----------------------------------------------------------------------------
-FILE (READ ${OPENNS_SRC_DIR}/bag.h _bag_h_contents)
+FILE (READ ${OPENNS_SRC_DIR}/bag_version.h _bag_h_contents)
 STRING (REGEX REPLACE ".*#define[ \t]+BAG_VER_MAJOR[ \t]+([0-9]*).*$"
     "\\1" OPENNS_VERS_MAJOR ${_bag_h_contents})
 STRING (REGEX REPLACE ".*#define[ \t]+BAG_VER_MINOR[ \t]+([0-9]*).*$"

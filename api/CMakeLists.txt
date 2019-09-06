@@ -14,7 +14,12 @@ IF(MSVC)
     
 	#if we are building a shared library, then we need to define these symbols.
 	IF(BUILD_SHARED_LIBS)
-		add_definitions(/D BAG_DLL /D BAG_EXPORTS)
+    add_definitions(/D BAG_DLL /D BAG_EXPORTS)
+    
+    #HDF5 as a DLL
+    #add_definitions(/D _HDF5USEDLL_ /D HDF5CPP_USEDLL /D H5_BUILT_AS_DYNAMIC_LIB)
+    add_definitions(/D H5_BUILT_AS_DYNAMIC_LIB)
+    
 	ENDIF(BUILD_SHARED_LIBS)
 
 ENDIF(MSVC)
@@ -34,6 +39,8 @@ set (BAG_SOURCE_FILES
  bag_metadatatypes.cpp
  bag_metadata_import.cpp
  bag_metadata_import.h
+ bag_compoundlayer.cpp
+ bag_compoundlayer.h
  bag_trackinglist.h
  bag_trackinglist.cpp
  bag_errors.h

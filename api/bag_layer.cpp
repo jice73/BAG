@@ -1,33 +1,15 @@
 #include "bag_layer.h"
 #include "bag_private.h"
+#include "bag_metadata.h"
+#include "bag_trackinglist.h"
 
-#include <src/h5cpp.h>
-#include <memory>
+#include <h5cpp.h>
 
 namespace BAG
 {
 
 namespace
 {
-
-struct LayerData : public Data
-{
-    LayerData(Dataset &dataset, LayerType type)
-        : m_bagDataset(dataset), m_type(type),
-        m_internalTypeId(0)
-    {
-    }
-        
-    ~LayerData()
-    {
-        H5Tclose(m_internalTypeId);
-    }
-
-    int32_t m_internalTypeId;
-    LayerType m_type;
-    Dataset &m_bagDataset;
-    std::unique_ptr<H5::DataSet> m_pH5Dataset;
-};
 
 DataType layerType2DataType(LayerType layerType)
 {
@@ -53,36 +35,22 @@ DataType layerType2DataType(LayerType layerType)
 }   //namespace
 
 Layer::Layer(Dataset &dataset, LayerType type)
-: m_pData(NULL)
+: m_type(type), m_pBagDataset(dataset.shared_from_this())
 {
-    H5::H5File *pFile = reinterpret_cast<H5::H5File *>(dataset.getFile());
-
-    LayerData *pLayerData = new LayerData(dataset, type);
+    H5::H5File& file = dataset.getFile();
 
     const char *internalPath = getInternalPath(type);
-    pLayerData->m_pH5Dataset.reset(new H5::DataSet(pFile->openDataSet(internalPath)));
-    pLayerData->m_internalTypeId = (int32_t)H5Dget_type(pLayerData->m_pH5Dataset->getId());
-
-    m_pData = pLayerData;
+    m_pH5Dataset.reset(new H5::DataSet(file.openDataSet(internalPath)));
+    m_internalTypeId = (int32_t)H5Dget_type(m_pH5Dataset->getId());
 }
 
 Layer::Layer(Dataset &dataset, LayerType type, const char* internalPath)
-: m_pData(NULL)
+    : m_type(type), m_pBagDataset(dataset.shared_from_this())
 {
-    H5::H5File *pFile = reinterpret_cast<H5::H5File *>(dataset.getFile());
+    H5::H5File& file = dataset.getFile();
 
-    LayerData *pLayerData = new LayerData(dataset, type);
-    
-    pLayerData->m_pH5Dataset.reset(new H5::DataSet(pFile->openDataSet(internalPath)));
-    pLayerData->m_internalTypeId = (int32_t)H5Dget_type(pLayerData->m_pH5Dataset->getId());
-
-    m_pData = pLayerData;
-}
-
-Layer::~Layer()
-{
-    if (m_pData != NULL)
-        delete m_pData;
+    m_pH5Dataset.reset(new H5::DataSet(file.openDataSet(internalPath)));
+    m_internalTypeId = (int32_t)H5Dget_type(m_pH5Dataset->getId());
 }
 
 const char* Layer::getInternalPath(LayerType type)
@@ -127,14 +95,12 @@ const char* Layer::getName() const
 
 DataType Layer::getDataType() const
 {
-    LayerData *pData = dynamic_cast<LayerData *>(m_pData);
-    return layerType2DataType(pData->m_type);
+    return layerType2DataType(m_type);
 }
 
 LayerType Layer::getLayerType() const
 {
-    LayerData *pData = dynamic_cast<LayerData *>(m_pData);
-    return pData->m_type;
+    return m_type;
 }
 
 uint8_t Layer::getElementSize() const
@@ -166,10 +132,8 @@ void Layer::getExtents(double &min, double &max) const
 
 uint8_t* Layer::read(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint32_t columnEnd, uint8_t *buffer) const
 {
-    LayerData *pData = dynamic_cast<LayerData *>(m_pData);
-
     uint32_t numRows, numCols;
-    pData->m_bagDataset.getDims(numRows, numCols);
+    m_pBagDataset->getDims(numRows, numCols);
 
     if (columnEnd >= numCols ||
         rowEnd >= numRows ||
@@ -198,17 +162,15 @@ uint8_t* Layer::read(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, u
         buffer = new uint8_t[bufferSize];
     }
 
-    pData->m_pH5Dataset->read(buffer, pData->m_internalTypeId, H5::DataSpace::ALL, fileSpace);
+    m_pH5Dataset->read(buffer, m_internalTypeId, H5::DataSpace::ALL, fileSpace);
 
     return buffer;
 }
 
 void Layer::write(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint32_t columnEnd, uint8_t *buffer)
 {
-    LayerData *pData = dynamic_cast<LayerData *>(m_pData);
-
     uint32_t numRows, numCols;
-    pData->m_bagDataset.getDims(numRows, numCols);
+    m_pBagDataset->getDims(numRows, numCols);
 
     if (columnEnd >= numCols ||
         rowEnd >= numRows ||
@@ -236,7 +198,7 @@ void Layer::write(uint32_t rowStart, uint32_t columnStart, uint32_t rowEnd, uint
     H5::DataSpace fileSpace(RANK, dims);
     fileSpace.offsetSimple(offset);
 
-    pData->m_pH5Dataset->write(buffer, pData->m_internalTypeId, H5::DataSpace::ALL, fileSpace);
+    m_pH5Dataset->write(buffer, m_internalTypeId, H5::DataSpace::ALL, fileSpace);
 }
 
 }   //namespace BAG

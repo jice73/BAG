@@ -1,10 +1,14 @@
 #include "bag_trackinglist.h"
+#include "bag_metadata.h"
+#include "bag_layer.h"
+
+#include <h5cpp.h>
 
 namespace BAG
 {
 
 TrackingList::TrackingList(Dataset &dataset)
-: m_dataset(dataset)
+: m_pBagDataset(dataset.shared_from_this())
 {
 }
 

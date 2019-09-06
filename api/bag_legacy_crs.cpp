@@ -108,7 +108,7 @@ namespace
     std::string ellipsoidToWkt(const char *ellipsoid)
     {
         const char *onsHome = getenv("BAG_HOME");
-        if (onsHome == NULL)
+        if (onsHome == nullptr)
             throw InvalidEllipsoidError();
 
         //Make the ellipsoid name all lower case so we can find it.
@@ -141,10 +141,10 @@ namespace
 
             //Decode all of the pieces.
             char *token = strtok(buffer, " ");
-            while (token != NULL)
+            while (token != nullptr)
             {
                 elements.push_back(token);
-                token = strtok(NULL, " ");
+                token = strtok(nullptr, " ");
             }
 
             free(buffer);
@@ -505,7 +505,7 @@ bagError bagLegacyToWkt(const bagLegacyReferenceSystem system,
     wktStream.imbue(std::locale::classic());
 
     //If we want the vertical system then...
-    if (vBuffer != NULL && vBuffer_size > 0 && strlen((char*)system.geoParameters.vertical_datum) != 0)
+    if (vBuffer != nullptr && vBuffer_size > 0 && strlen((char*)system.geoParameters.vertical_datum) != 0)
     {
         wktStream << "VERT_CS[\"" << system.geoParameters.vertical_datum
             << "\", VERT_DATUM[\"" << system.geoParameters.vertical_datum << "\", 2000]]";
@@ -518,7 +518,7 @@ bagError bagLegacyToWkt(const bagLegacyReferenceSystem system,
     }
 
     //If we want the horizontal system then...
-    if (hBuffer != NULL && hBuffer_size > 0)
+    if (hBuffer != nullptr && hBuffer_size > 0)
     {
         switch (system.coordSys)
         {
@@ -911,7 +911,7 @@ bagError bagWktToLegacy(const char *horiz_wkt, const char *vert_wkt,
     memset(system, 0, sizeof(bagLegacyReferenceSystem));
 
     //If we have a vertical wkt string
-    if (vert_wkt != NULL && strlen(vert_wkt) != 0)
+    if (vert_wkt != nullptr && strlen(vert_wkt) != 0)
     {
         //First make the wkt string lower case.
         std::string vWktLower(vert_wkt);
@@ -924,7 +924,7 @@ bagError bagWktToLegacy(const char *horiz_wkt, const char *vert_wkt,
     }
 
     //If we have a horizontal wkt string
-    if (horiz_wkt != NULL && strlen(horiz_wkt) != 0)
+    if (horiz_wkt != nullptr && strlen(horiz_wkt) != 0)
     {
         //First make the wkt string lower case.
         std::string hWktLower(horiz_wkt);

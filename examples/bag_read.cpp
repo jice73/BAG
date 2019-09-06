@@ -10,20 +10,20 @@ int main(int argc, char **argv)
 {
     using namespace BAG;
 
-    Dataset dataset("D:/caris_work/openns/trunk/examples/sample-data/sample.bag", BAG_OPEN_READONLY);
+    auto&& dataset = Dataset::create("D:/caris_work/BAG/examples/sample-data/sample.bag", BAG_OPEN_READONLY);
 
     uint32_t numRows, numCols;
-    dataset.getDims(numRows, numCols);
+    dataset->getDims(numRows, numCols);
 
     double minX, minY, maxX, maxY;
-    dataset.gridToGeo(0, 0, minX, minY);
-    dataset.gridToGeo(numRows - 1, numCols - 1, maxX, maxY);
+    dataset->gridToGeo(0, 0, minX, minY);
+    dataset->gridToGeo(numRows - 1, numCols - 1, maxX, maxY);
     std::cout << minX << " " << minY << " " << maxX << " " << maxY;
 
-    const std::vector<LayerType> layerTypes = dataset.getLayerTypes();
+    const std::vector<LayerType> layerTypes = dataset->getLayerTypes();
     for (auto type : layerTypes)
     {
-        const Layer &layer = dataset.getLayer(type);
+        const Layer &layer = dataset->getLayer(type);
 
         const char* name = layer.getName();
         DataType dataType = layer.getDataType();
