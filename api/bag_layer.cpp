@@ -34,23 +34,15 @@ DataType layerType2DataType(LayerType layerType)
 
 }   //namespace
 
-Layer::Layer(Dataset &dataset, LayerType type)
-: m_type(type), m_pBagDataset(dataset.shared_from_this())
-{
-    H5::H5File& file = dataset.getFile();
-
-    const char *internalPath = getInternalPath(type);
-    m_pH5Dataset.reset(new H5::DataSet(file.openDataSet(internalPath)));
-    m_internalTypeId = (int32_t)H5Dget_type(m_pH5Dataset->getId());
-}
-
 Layer::Layer(Dataset &dataset, LayerType type, const char* internalPath)
     : m_type(type), m_pBagDataset(dataset.shared_from_this())
 {
     H5::H5File& file = dataset.getFile();
 
-    m_pH5Dataset.reset(new H5::DataSet(file.openDataSet(internalPath)));
-    m_internalTypeId = (int32_t)H5Dget_type(m_pH5Dataset->getId());
+    const auto* intPath = internalPath ? internalPath : getInternalPath(type);
+
+    m_pH5Dataset = std::make_unique<H5::DataSet>(file.openDataSet(intPath));
+    m_internalTypeId = static_cast<int64_t>(H5Dget_type(m_pH5Dataset->getId()));
 }
 
 const char* Layer::getInternalPath(LayerType type)

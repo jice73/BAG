@@ -36,13 +36,12 @@ public:
     static const char* getInternalPath(LayerType type);
 
 protected:
-    
-    Layer(Dataset &dataset, LayerType type);
-    Layer(Dataset &dataset, LayerType type, const char* internalPath);
+
+    Layer(Dataset &dataset, LayerType type, const char* internalPath = nullptr);
 
 private:
-    
-    int32_t m_internalTypeId;
+
+    int64_t m_internalTypeId;
     LayerType m_type;
     std::shared_ptr<Dataset> m_pBagDataset;
     std::unique_ptr<H5::DataSet> m_pH5Dataset;
