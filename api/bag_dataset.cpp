@@ -16,56 +16,58 @@ void Dataset::openDataset(const std::string &fileName, BAG_OPEN_MODE openMode)
     m_pFile.reset(new H5::H5File(fileName.c_str(),
         (openMode == BAG_OPEN_READONLY) ? H5F_ACC_RDONLY : H5F_ACC_RDWR));
 
-    std::unique_ptr<H5::Group> pBagGroup(new H5::Group(m_pFile->openGroup(ROOT_PATH)));
+    const H5::Group bagGroup = m_pFile->openGroup(ROOT_PATH);
 
     //Read the version.
-    H5::Attribute verstionAtt = pBagGroup->openAttribute(BAG_VERSION_NAME);
-    verstionAtt.read(H5T_C_S1, m_version);
+    const H5::Attribute versionAtt = bagGroup.openAttribute(BAG_VERSION_NAME);
+    versionAtt.read(versionAtt.getDataType(), m_version);
 
     //Create all of our layers.
     for (int i = Elevation; i < Nominal_Elevation; ++i)
     {
-        const char* internalPath = Layer::getInternalPath(static_cast<LayerType>(i));
+        const auto layerType = static_cast<LayerType>(i);
+        const char* internalPath = Layer::getInternalPath(layerType);
         if (internalPath == nullptr)
             continue;
 
-        hid_t id = H5Dopen2( pBagGroup->getLocId(), internalPath, H5P_DEFAULT );
-        if (id >= 0)
-        {
-            H5Dclose(id);
-        
-            m_layerMap.insert(std::make_pair(static_cast<LayerType>(i),
-                std::unique_ptr<Layer>(new Layer(*this, static_cast<LayerType>(i)))));
-        }
+        const hid_t id = H5Dopen2(bagGroup.getLocId(), internalPath, H5P_DEFAULT);
+        if (id < 0)
+            continue;
+
+        H5Dclose(id);
+
+        m_layerMap.emplace(layerType,
+            std::unique_ptr<Layer>(new Layer(*this, layerType)));
     }
 
     //Special case for v1.5 bags.
+    if (m_version == "1.5.0")
     {
-        hid_t id = H5Dopen2( pBagGroup->getLocId(), NODE_GROUP_PATH, H5P_DEFAULT );
+        hid_t id = H5Dopen2(bagGroup.getLocId(), NODE_GROUP_PATH, H5P_DEFAULT);
         if (id >= 0)
         {
             H5Dclose(id);
 
-            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
-                std::unique_ptr<Layer>(new InterleavedLayer(*this, Hypothesis_Strength, NODE))));
+            m_layerMap.emplace(Hypothesis_Strength,
+                std::unique_ptr<Layer>(new InterleavedLayer(*this, Hypothesis_Strength, NODE)));
 
-            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
-                std::unique_ptr<Layer>(new InterleavedLayer(*this, Num_Hypotheses, NODE))));
+            m_layerMap.emplace(Hypothesis_Strength,
+                std::unique_ptr<Layer>(new InterleavedLayer(*this, Num_Hypotheses, NODE)));
         }
 
-        id = H5Dopen2( pBagGroup->getLocId(), ELEVATION_SOLUTION_GROUP_PATH, H5P_DEFAULT );
+        id = H5Dopen2(bagGroup.getLocId(), ELEVATION_SOLUTION_GROUP_PATH, H5P_DEFAULT);
         if (id >= 0)
         {
             H5Dclose(id);
 
-            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
-                std::unique_ptr<Layer>(new InterleavedLayer(*this, Shoal_Elevation, ELEVATION))));
+            m_layerMap.emplace(Hypothesis_Strength,
+                std::unique_ptr<Layer>(new InterleavedLayer(*this, Shoal_Elevation, ELEVATION)));
 
-            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
-                std::unique_ptr<Layer>(new InterleavedLayer(*this, Std_Dev, ELEVATION))));
+            m_layerMap.emplace(Hypothesis_Strength,
+                std::unique_ptr<Layer>(new InterleavedLayer(*this, Std_Dev, ELEVATION)));
 
-            m_layerMap.insert(std::make_pair(Hypothesis_Strength,
-                std::unique_ptr<Layer>(new InterleavedLayer(*this, Num_Soundings, ELEVATION))));
+            m_layerMap.emplace(Hypothesis_Strength,
+                std::unique_ptr<Layer>(new InterleavedLayer(*this, Num_Soundings, ELEVATION)));
         }
     }
 

@@ -28,7 +28,7 @@ namespace H5
 namespace BAG
 {
 
-class BAG_API Dataset : public std::enable_shared_from_this<Dataset>
+class BAG_API Dataset final : public std::enable_shared_from_this<Dataset>
 {
 public:
 
@@ -69,7 +69,7 @@ private:
 
     std::string m_version;
     std::unique_ptr<H5::H5File> m_pFile;
-    std::map<LayerType, std::unique_ptr<Layer> > m_layerMap;
+    std::map<LayerType, std::unique_ptr<Layer>> m_layerMap;
     std::unique_ptr<TrackingList> m_pTrackingList;
     std::unique_ptr<Metadata> m_pMetadata;
 
